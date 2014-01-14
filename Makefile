@@ -27,4 +27,15 @@ signify: $O
 signify: CFLAGS += $(PKG_CFLAGS) -Wall
 
 clean:
-	$(RM) $O signify
+	$(RM) $O signify signify.1.gz
+
+signify.1.gz: signify.1
+	gzip -9c $< > $@
+
+install: signify signify.1.gz
+	install -m 755 -d $(DESTDIR)$(PREFIX)/bin
+	install -m 755 -t $(DESTDIR)$(PREFIX)/bin signify
+	install -m 755 -d $(DESTDIR)$(PREFIX)/share/man/man1
+	install -m 644 -t $(DESTDIR)$(PREFIX)/share/man/man1 signify.1.gz
+
+.PHONY: install
