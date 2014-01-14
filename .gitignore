@@ -1,0 +1,5 @@
+*.o
+.*.sw[po]
+*.pyc
+signify
+signify.1.gz
