@@ -38,3 +38,11 @@ install: signify signify.1.gz
 	install -m 644 -t $(DESTDIR)$(PREFIX)/share/man/man1 signify.1.gz
 
 .PHONY: install
+
+GIT_TAG  = $(shell git describe --tags HEAD)
+dist: T := $(GIT_TAG)
+dist: V := $(patsubst v%,%,$T)
+dist:
+	git archive --prefix=signify-$V/ $T | xz -9c > signify-$V.tar.xz
+
+.PHONY: dist
