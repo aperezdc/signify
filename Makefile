@@ -12,8 +12,7 @@ S := crypto_api.c \
 		 bcrypt_pbkdf.c \
 		 timingsafe_bcmp.c \
 		 blowfish.c \
-		 b64_pton.c \
-		 b64_ntop.c \
+		 base64.c \
 		 signify.c
 O := $(patsubst %.c,%.o,$S)
 

@@ -31,14 +31,6 @@
 
 #include "crypto_api.h"
 
-#ifdef b64_pton
-#undef b64_pton
-#endif
-
-#ifdef b64_ntop
-#undef b64_ntop
-#endif
-
 extern int b64_pton(char const *src, uint8_t *target, size_t targsize);
 extern int b64_ntop(uint8_t const *src, size_t srclength, char *target, size_t targsize);
 
