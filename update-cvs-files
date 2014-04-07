@@ -1,0 +1,20 @@
+#! /bin/sh
+#
+# update-cvs-files
+# Copyright (C) 2014 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+CVSWEB_URL='http://www.openbsd.org/cgi-bin/cvsweb/~checkout~'
+
+while read -r cvs_path ; do
+	filename=${cvs_path##*/}
+	if [[ -z ${filename} ]] ; then
+		continue
+	fi
+	echo "[32;1m*[0;0m[1;1m ${filename}[0;0m ($cvs_path)"
+	curl -\# -o "${filename}" "${CVSWEB_URL}/${cvs_path}"
+done
+
