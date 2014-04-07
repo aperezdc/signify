@@ -107,7 +107,7 @@ static void square(unsigned int out[32],const unsigned int a[32])
   squeeze(out);
 }
 
-static void xselect(unsigned int p[64],unsigned int q[64],const unsigned int r[64],const unsigned int s[64],unsigned int b)
+static void select(unsigned int p[64],unsigned int q[64],const unsigned int r[64],const unsigned int s[64],unsigned int b)
 {
   unsigned int j;
   unsigned int t;
@@ -152,7 +152,7 @@ static void mainloop(unsigned int work[64],const unsigned char e[32])
   for (pos = 254;pos >= 0;--pos) {
     b = e[pos / 8] >> (pos & 7);
     b &= 1;
-    xselect(xzmb,xzm1b,xzm,xzm1,b);
+    select(xzmb,xzm1b,xzm,xzm1,b);
     add(a0,xzmb,xzmb + 32);
     sub(a0 + 32,xzmb,xzmb + 32);
     add(a1,xzm1b,xzm1b + 32);
@@ -171,7 +171,7 @@ static void mainloop(unsigned int work[64],const unsigned char e[32])
     mult(xznb + 32,s,u);
     square(xzn1b,c1);
     mult(xzn1b + 32,r,work);
-    xselect(xzm,xzm1,xznb,xzn1b,b);
+    select(xzm,xzm1,xznb,xzn1b,b);
   }
 
   for (j = 0;j < 64;++j) work[j] = xzm[j];

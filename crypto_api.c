@@ -6,20 +6,21 @@
 #include <sys/types.h>
 
 #include <string.h>
-#include <openssl/sha.h>
+#include "sha2.h"
 
 #include "crypto_api.h"
+
 extern int timingsafe_bcmp(const void *b1, const void *b2, size_t n);
 
 int
 crypto_hash_sha512(unsigned char *out, const unsigned char *in,
     unsigned long long inlen)
 {
-	SHA512_CTX ctx;
+	SHA2_CTX ctx;
 
-	SHA512_Init(&ctx);
-	SHA512_Update(&ctx, in, inlen);
-	SHA512_Final(out, &ctx);
+	SHA512Init(&ctx);
+	SHA512Update(&ctx, in, inlen);
+	SHA512Final(out, &ctx);
 	return 0;
 }
 

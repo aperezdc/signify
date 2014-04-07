@@ -15,6 +15,7 @@ typedef int32_t crypto_int32;
 typedef uint32_t crypto_uint32;
 
 #define randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
+extern void arc4random_buf(void *buf, size_t n);
 
 #define crypto_hashblocks_sha512_STATEBYTES 64U
 #define crypto_hashblocks_sha512_BLOCKBYTES 128U
@@ -38,8 +39,5 @@ int	crypto_sign_ed25519(unsigned char *, unsigned long long *,
 int	crypto_sign_ed25519_open(unsigned char *, unsigned long long *,
     const unsigned char *, unsigned long long, const unsigned char *);
 int	crypto_sign_ed25519_keypair(unsigned char *, unsigned char *);
-
-int bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds);
 
 #endif /* crypto_api_h */

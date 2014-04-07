@@ -1,4 +1,4 @@
-.\" $OpenBSD: signify.1,v 1.19 2014/01/13 01:40:43 tedu Exp $
+.\" $OpenBSD: signify.1,v 1.26 2014/03/16 22:49:56 tedu Exp $
 .\"
 .\"Copyright (c) 2013 Marc Espie <espie@openbsd.org>
 .\"Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
@@ -14,7 +14,7 @@
 .\"WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 .\"ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-.Dd $Mdocdate: January 13 2014 $
+.Dd $Mdocdate: March 16 2014 $
 .Dt SIGNIFY 1
 .Os
 .Sh NAME
@@ -22,9 +22,15 @@
 .Nd cryptographically sign and verify files
 .Sh SYNOPSIS
 .Nm signify
+.Fl C
+.Op Fl q
+.Fl p Ar pubkey
+.Fl x Ar sigfile
+.Op Ar
+.Nm signify
 .Fl G
-.Op Fl c Ar comment
 .Op Fl n
+.Op Fl c Ar comment
 .Fl p Ar pubkey
 .Fl s Ar seckey
 .Nm signify
@@ -40,7 +46,7 @@
 .Fl m Ar message
 .Nm signify
 .Fl V
-.Op Fl e
+.Op Fl eq
 .Op Fl x Ar sigfile
 .Fl p Ar pubkey
 .Fl m Ar message
@@ -52,8 +58,15 @@ A signature verifies the integrity of a
 .Ar message .
 The mode of operation is selected with the following options:
 .Bl -tag -width Dsssigfile
+.It Fl C
+Verify a signed checksum list, and then verify the checksum for
+each file.
+If no files are specified, all of them are checked.
+.Ar sigfile
+should be the signed output of
+.Xr sha256 1 .
 .It Fl G
-Generate a new keypair.
+Generate a new key pair.
 .It Fl I
 Inspect the specified keys or signature and print their fingerprint.
 .It Fl S
@@ -89,6 +102,9 @@ Public key produced by
 and used by
 .Fl V
 to check a signature.
+.It Fl q
+Quiet mode.
+Suppress informational output.
 .It Fl s Ar seckey
 Secret (private) key produced by
 .Fl G ,
@@ -106,6 +122,10 @@ The key and signature files created by
 have the same format.
 The first line of the file is a free form text comment that may be edited,
 so long as it does not exceed a single line.
+.\" Signature comments will be generated based on the name of the secret
+.\" key used for signing.
+.\" This comment can then be used as a hint for the name of the public key
+.\" when verifying.
 The second line of the file is the actual key or signature base64 encoded.
 .Sh EXIT STATUS
 .Ex -std signify
@@ -122,7 +142,7 @@ The message file was corrupted and its signature does not match.
 The message file is too large.
 .El
 .Sh EXAMPLES
-Create a new keypair:
+Create a new key pair:
 .Dl $ signify -G -p newkey.pub -s newkey.sec
 .Pp
 Sign a file, specifying a signature name:
@@ -134,7 +154,14 @@ Verify a signature, using the default signature name:
 Verify a release directory containing
 .Pa SHA256.sig
 and a full set of release files:
-.Dl $ signify -V -e -p /etc/signify/55base.pub -x SHA256.sig -m - && sha256 -c -
+.Bd -literal -offset indent -compact
+$ signify -C -p /etc/signify/openbsd-55-base.pub -x SHA256.sig
+.Ed
+.Pp
+Verify a bsd.rd before an upgrade:
+.Bd -literal -offset indent -compact
+$ signify -C -p /etc/signify/openbsd-55-base.pub -x SHA256.sig bsd.rd
+.Ed
 .Sh SEE ALSO
 .Xr fw_update 1 ,
 .Xr pkg_add 1 ,
