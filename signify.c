@@ -1,4 +1,4 @@
-/* $OpenBSD: signify.c,v 1.69 2014/03/17 15:19:06 tedu Exp $ */
+/* $OpenBSD: signify.c,v 1.72 2014/04/22 21:24:20 tedu Exp $ */
 /*
  * Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
  *
@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <err.h>
 #include <unistd.h>
+#include <errno.h>
 #include <bsd/readpassphrase.h>
 #include <bsd/libutil.h>
 #include "sha2.h"
@@ -72,6 +73,23 @@ extern char *__progname;
 extern void explicit_bzero(void *p, size_t n);
 extern int bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
     uint8_t *key, size_t keylen, unsigned int rounds);
+
+/*
+ * Copied from:
+ * http://www.openbsd.org/cgi-bin/cvsweb/src/lib/libc/stdlib/malloc.c
+ */
+#define MUL_NO_OVERFLOW (1UL << (sizeof(size_t) * 4))
+static inline void*
+reallocarray(void *optr, size_t nmemb, size_t size)
+{
+    if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+        nmemb > 0 && SIZE_MAX / nmemb < size) {
+        errno = ENOMEM;
+        return NULL;
+    }
+    return realloc(optr, size * nmemb);
+}
+
 
 static void
 usage(const char *error)
@@ -141,7 +159,7 @@ parseb64file(const char *filename, char *b64, void *buf, size_t buflen,
 	if (comment) {
 		if (strlcpy(comment, b64 + COMMENTHDRLEN,
 		    COMMENTMAXLEN) >= COMMENTMAXLEN)
-			err(1, "comment too long");
+			errx(1, "comment too long");
 	}
 	b64end = strchr(commentend + 1, '\n');
 	if (!b64end)
@@ -239,7 +257,7 @@ writeb64file(const char *filename, const char *comment, const void *buf,
 	fd = xopen(filename, O_CREAT|oflags|O_NOFOLLOW|O_WRONLY, mode);
 	if (snprintf(header, sizeof(header), "%s%s\n",
 	    COMMENTHDR, comment) >= sizeof(header))
-		err(1, "comment too long");
+		errx(1, "comment too long");
 	writeall(fd, header, strlen(header), filename);
 	if ((rv = b64_ntop(buf, buflen, b64, sizeof(b64)-1)) == -1)
 		errx(1, "b64 encode failed");
@@ -252,7 +270,7 @@ writeb64file(const char *filename, const char *comment, const void *buf,
 }
 
 static void
-kdf(uint8_t *salt, size_t saltlen, int rounds, int allowstdin,
+kdf(uint8_t *salt, size_t saltlen, int rounds, int allowstdin, int confirm,
     uint8_t *key, size_t keylen)
 {
 	char pass[1024];
@@ -269,6 +287,15 @@ kdf(uint8_t *salt, size_t saltlen, int rounds, int allowstdin,
 		errx(1, "unable to read passphrase");
 	if (strlen(pass) == 0)
 		errx(1, "please provide a password");
+	if (confirm && !(rppflags & RPP_STDIN)) {
+		char pass2[1024];
+		if (!readpassphrase("confirm passphrase: ", pass2,
+		    sizeof(pass2), rppflags))
+			errx(1, "unable to read passphrase");
+		if (strcmp(pass, pass2) != 0)
+			errx(1, "passwords don't match");
+		explicit_bzero(pass2, sizeof(pass2));
+	}
 	if (bcrypt_pbkdf(pass, strlen(pass), salt, saltlen, key,
 	    keylen, rounds) == -1)
 		errx(1, "bcrypt pbkdf");
@@ -313,7 +340,7 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 	enckey.kdfrounds = htonl(rounds);
 	memcpy(enckey.fingerprint, fingerprint, FPLEN);
 	arc4random_buf(enckey.salt, sizeof(enckey.salt));
-	kdf(enckey.salt, sizeof(enckey.salt), rounds, 1, xorkey, sizeof(xorkey));
+	kdf(enckey.salt, sizeof(enckey.salt), rounds, 1, 1, xorkey, sizeof(xorkey));
 	memcpy(enckey.checksum, digest, sizeof(enckey.checksum));
 	for (i = 0; i < sizeof(enckey.seckey); i++)
 		enckey.seckey[i] ^= xorkey[i];
@@ -322,7 +349,7 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 
 	if (snprintf(commentbuf, sizeof(commentbuf), "%s secret key",
 	    comment) >= sizeof(commentbuf))
-		err(1, "comment too long");
+		errx(1, "comment too long");
 	writeb64file(seckeyfile, commentbuf, &enckey,
 	    sizeof(enckey), NULL, 0, O_EXCL, 0600);
 	explicit_bzero(&enckey, sizeof(enckey));
@@ -331,7 +358,7 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 	memcpy(pubkey.fingerprint, fingerprint, FPLEN);
 	if (snprintf(commentbuf, sizeof(commentbuf), "%s public key",
 	    comment) >= sizeof(commentbuf))
-		err(1, "comment too long");
+		errx(1, "comment too long");
 	writeb64file(pubkeyfile, commentbuf, &pubkey,
 	    sizeof(pubkey), NULL, 0, O_EXCL, 0666);
 }
@@ -357,7 +384,7 @@ sign(const char *seckeyfile, const char *msgfile, const char *sigfile,
 		errx(1, "unsupported KDF");
 	rounds = ntohl(enckey.kdfrounds);
 	kdf(enckey.salt, sizeof(enckey.salt), rounds, strcmp(msgfile, "-") != 0,
-	    xorkey, sizeof(xorkey));
+	    0, xorkey, sizeof(xorkey));
 	for (i = 0; i < sizeof(enckey.seckey); i++)
 		enckey.seckey[i] ^= xorkey[i];
 	explicit_bzero(xorkey, sizeof(xorkey));
@@ -378,11 +405,11 @@ sign(const char *seckeyfile, const char *msgfile, const char *sigfile,
 	if ((secname = strstr(seckeyfile, ".sec")) && strlen(secname) == 4) {
 		if (snprintf(sigcomment, sizeof(sigcomment), VERIFYWITH "%.*s.pub",
 		    (int)strlen(seckeyfile) - 4, seckeyfile) >= sizeof(sigcomment))
-			err(1, "comment too long");
+			errx(1, "comment too long");
 	} else {
 		if (snprintf(sigcomment, sizeof(sigcomment), "signature from %s",
 		    comment) >= sizeof(sigcomment))
-			err(1, "comment too long");
+			errx(1, "comment too long");
 	}
 	if (embedded)
 		writeb64file(sigfile, sigcomment, &sig, sizeof(sig), msg,
@@ -544,8 +571,8 @@ verifychecksums(char *msg, int argc, char **argv, int quiet)
 
 	line = msg;
 	while (line && *line) {
-		if (!(checksums = realloc(checksums,
-		    sizeof(*c) * (nchecksums + 1))))
+		if (!(checksums = reallocarray(checksums,
+		    nchecksums + 1, sizeof(*checksums))))
 			err(1, "realloc");
 		c = &checksums[nchecksums++];
 		if ((endline = strchr(line, '\n')))
