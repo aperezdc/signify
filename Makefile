@@ -4,6 +4,7 @@
 #
 
 CFLAGS += $(EXTRA_CFLAGS)
+LDFLAGS += $(EXTRA_LDFLAGS)
 
 S := crypto_api.c \
      mod_ed25519.c \
@@ -48,6 +49,7 @@ endif
 
 ifneq ($(strip $(LTO)),)
     CFLAGS += -flto
+    LDFLAGS += -flto
 endif
 
 O := $(patsubst %.c,%.o,$S)
