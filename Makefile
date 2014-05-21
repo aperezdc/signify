@@ -20,6 +20,28 @@ S := crypto_api.c \
 		 sha256hl.c \
 		 sha512hl.c \
 		 signify.c
+
+ifeq ($(strip $(VERIFY_ONLY)),)
+S += ohash_init.c \
+     ohash_enum.c \
+     ohash_delete.c \
+     ohash_entries.c \
+     ohash_qlookup.c \
+     ohash_qlookupi.c \
+     ohash_interval.c \
+     ohash_lookup_interval.c \
+     ohash_do.c
+else
+     CPPFLAGS += -DVERIFY_ONLY=1
+     $(warning )
+     $(warning ******************************************************)
+     $(warning )
+     $(warning Building with VERIFY_ONLY enabled is unsupported, YMMV)
+     $(warning )
+     $(warning ******************************************************)
+     $(warning )
+endif
+
 O := $(patsubst %.c,%.o,$S)
 
 PKG_CFLAGS := $(shell pkg-config libbsd --cflags)

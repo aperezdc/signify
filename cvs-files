@@ -10,6 +10,16 @@ src/lib/libc/net/base64.c
 src/lib/libc/string/timingsafe_bcmp.c
 src/lib/libc/string/explicit_bzero.c
 
+src/lib/libutil/ohash.h
+src/lib/libutil/ohash_int.h
+src/lib/libutil/ohash_do.c
+src/lib/libutil/ohash_init.c
+src/lib/libutil/ohash_enum.c
+src/lib/libutil/ohash_delete.c
+src/lib/libutil/ohash_interval.c
+src/lib/libutil/ohash_lookup_interval.c
+src/lib/libutil/ohash_qlookup.c
+src/lib/libutil/ohash_qlookupi.c
 src/lib/libutil/bcrypt_pbkdf.c
 
 src/usr.bin/signify/crypto_api.c
