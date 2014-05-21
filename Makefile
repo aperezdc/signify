@@ -3,7 +3,7 @@
 # Adrian Perez, 2014-01-14 14:33
 #
 
-CPPFLAGS += -D'__bounded__(a,b,c)='
+CFLAGS += $(EXTRA_CFLAGS)
 
 S := crypto_api.c \
      mod_ed25519.c \
@@ -40,6 +40,14 @@ else
      $(warning )
      $(warning ******************************************************)
      $(warning )
+endif
+
+ifeq ($(strip $(BOUNDS_CHECKING)),)
+    CPPFLAGS += -D'__bounded__(a,b,c)='
+endif
+
+ifneq ($(strip $(LTO)),)
+    CFLAGS += -flto
 endif
 
 O := $(patsubst %.c,%.o,$S)
