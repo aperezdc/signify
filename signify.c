@@ -1,4 +1,4 @@
-/* $OpenBSD: signify.c,v 1.88 2014/05/16 18:35:01 tedu Exp $ */
+/* $OpenBSD: signify.c,v 1.91 2014/07/13 18:59:40 tedu Exp $ */
 /*
  * Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
  *
@@ -79,23 +79,6 @@ extern void explicit_bzero(void *p, size_t n);
 extern int bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
     uint8_t *key, size_t keylen, unsigned int rounds);
 
-/*
- * Copied from:
- * http://www.openbsd.org/cgi-bin/cvsweb/src/lib/libc/stdlib/malloc.c
- */
-#define MUL_NO_OVERFLOW (1UL << (sizeof(size_t) * 4))
-static inline void*
-reallocarray(void *optr, size_t nmemb, size_t size)
-{
-    if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-        nmemb > 0 && SIZE_MAX / nmemb < size) {
-        errno = ENOMEM;
-        return NULL;
-    }
-    return realloc(optr, size * nmemb);
-}
-
-
 static void
 usage(const char *error)
 {
@@ -142,8 +125,7 @@ xmalloc(size_t len)
 {
 	void *p;
 
-	p = malloc(len);
-	if (!p)
+	if (!(p = malloc(len)))
 		err(1, "malloc %zu", len);
 	return p;
 }
@@ -165,8 +147,7 @@ parseb64file(const char *filename, char *b64, void *buf, size_t buflen,
 		    COMMENTMAXLEN) >= COMMENTMAXLEN)
 			errx(1, "comment too long");
 	}
-	b64end = strchr(commentend + 1, '\n');
-	if (!b64end)
+	if (!(b64end = strchr(commentend + 1, '\n')))
 		errx(1, "missing new line after base64 in %s", filename);
 	*b64end = '\0';
 	if (b64_pton(commentend + 1, buf, buflen) != buflen)
@@ -183,8 +164,7 @@ readb64file(const char *filename, void *buf, size_t buflen, char *comment)
 	int rv, fd;
 
 	fd = xopen(filename, O_RDONLY | O_NOFOLLOW, 0);
-	rv = read(fd, b64, sizeof(b64) - 1);
-	if (rv == -1)
+	if ((rv = read(fd, b64, sizeof(b64) - 1)) == -1)
 		err(1, "read from %s", filename);
 	b64[rv] = '\0';
 	parseb64file(filename, b64, buf, buflen, comment);
@@ -241,8 +221,7 @@ writeall(int fd, const void *buf, size_t buflen, const char *filename)
 	ssize_t x;
 
 	while (buflen != 0) {
-		x = write(fd, buf, buflen);
-		if (x == -1)
+		if ((x = write(fd, buf, buflen)) == -1)
 			err(1, "write to %s", filename);
 		buflen -= x;
 		buf = (char *)buf + x;
@@ -256,11 +235,11 @@ writeb64file(const char *filename, const char *comment, const void *buf,
 {
 	char header[1024];
 	char b64[1024];
-	int fd, rv;
+	int fd, rv, nr;
 
 	fd = xopen(filename, O_CREAT|oflags|O_NOFOLLOW|O_WRONLY, mode);
-	if (snprintf(header, sizeof(header), "%s%s\n",
-	    COMMENTHDR, comment) >= sizeof(header))
+	if ((nr = snprintf(header, sizeof(header), "%s%s\n",
+	    COMMENTHDR, comment)) == -1 || nr >= sizeof(header))
 		errx(1, "comment too long");
 	writeall(fd, header, strlen(header), filename);
 	if ((rv = b64_ntop(buf, buflen, b64, sizeof(b64)-1)) == -1)
@@ -330,7 +309,7 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 	uint8_t fingerprint[FPLEN];
 	char commentbuf[COMMENTMAXLEN];
 	SHA2_CTX ctx;
-	int i;
+	int i, nr;
 
 	crypto_sign_ed25519_keypair(pubkey.pubkey, enckey.seckey);
 	arc4random_buf(fingerprint, sizeof(fingerprint));
@@ -351,8 +330,8 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 	explicit_bzero(digest, sizeof(digest));
 	explicit_bzero(xorkey, sizeof(xorkey));
 
-	if (snprintf(commentbuf, sizeof(commentbuf), "%s secret key",
-	    comment) >= sizeof(commentbuf))
+	if ((nr = snprintf(commentbuf, sizeof(commentbuf), "%s secret key",
+	    comment)) == -1 || nr >= sizeof(commentbuf))
 		errx(1, "comment too long");
 	writeb64file(seckeyfile, commentbuf, &enckey,
 	    sizeof(enckey), NULL, 0, O_EXCL, 0600);
@@ -360,8 +339,8 @@ generate(const char *pubkeyfile, const char *seckeyfile, int rounds,
 
 	memcpy(pubkey.pkalg, PKALG, 2);
 	memcpy(pubkey.fingerprint, fingerprint, FPLEN);
-	if (snprintf(commentbuf, sizeof(commentbuf), "%s public key",
-	    comment) >= sizeof(commentbuf))
+	if ((nr = snprintf(commentbuf, sizeof(commentbuf), "%s public key",
+	    comment)) == -1 || nr >= sizeof(commentbuf))
 		errx(1, "comment too long");
 	writeb64file(pubkeyfile, commentbuf, &pubkey,
 	    sizeof(pubkey), NULL, 0, O_EXCL, 0666);
@@ -379,7 +358,7 @@ sign(const char *seckeyfile, const char *msgfile, const char *sigfile,
 	char comment[COMMENTMAXLEN], sigcomment[COMMENTMAXLEN];
 	char *secname;
 	unsigned long long msglen;
-	int i, rounds;
+	int i, rounds, nr;
 	SHA2_CTX ctx;
 
 	readb64file(seckeyfile, &enckey, sizeof(enckey), comment);
@@ -406,13 +385,14 @@ sign(const char *seckeyfile, const char *msgfile, const char *sigfile,
 	explicit_bzero(&enckey, sizeof(enckey));
 
 	memcpy(sig.pkalg, PKALG, 2);
-	if ((secname = strstr(seckeyfile, ".sec")) && strlen(secname) == 4) {
-		if (snprintf(sigcomment, sizeof(sigcomment), VERIFYWITH "%.*s.pub",
-		    (int)strlen(seckeyfile) - 4, seckeyfile) >= sizeof(sigcomment))
+	secname = strstr(seckeyfile, ".sec");
+	if (secname && strlen(secname) == 4) {
+		if ((nr = snprintf(sigcomment, sizeof(sigcomment), VERIFYWITH "%.*s.pub",
+		    (int)strlen(seckeyfile) - 4, seckeyfile)) == -1 || nr >= sizeof(sigcomment))
 			errx(1, "comment too long");
 	} else {
-		if (snprintf(sigcomment, sizeof(sigcomment), "signature from %s",
-		    comment) >= sizeof(sigcomment))
+		if ((nr = snprintf(sigcomment, sizeof(sigcomment), "signature from %s",
+		    comment)) == -1 || nr >= sizeof(sigcomment))
 			errx(1, "comment too long");
 	}
 	if (embedded)
@@ -482,7 +462,8 @@ readpubkey(const char *pubkeyfile, struct pubkey *pubkey,
 	const char *safepath = "/etc/signify/";
 
 	if (!pubkeyfile) {
-		if ((pubkeyfile = strstr(sigcomment, VERIFYWITH))) {
+		pubkeyfile = strstr(sigcomment, VERIFYWITH);
+		if (pubkeyfile) {
 			pubkeyfile += strlen(VERIFYWITH);
 			if (strncmp(pubkeyfile, safepath, strlen(safepath)) != 0 ||
 			    strstr(pubkeyfile, "/../") != NULL)
@@ -570,8 +551,7 @@ ecalloc(size_t s1, size_t s2, void *data)
 {
 	void *p;
 
-	p = calloc(s1, s2);
-	if (!p)
+	if (!(p = calloc(s1, s2)))
 		err(1, "calloc");
 	return p;
 }
@@ -792,10 +772,11 @@ main(int argc, char **argv)
 		usage(NULL);
 
 	if (!sigfile && msgfile) {
+		int nr;
 		if (strcmp(msgfile, "-") == 0)
 			usage("must specify sigfile with - message");
-		if (snprintf(sigfilebuf, sizeof(sigfilebuf), "%s.sig",
-		    msgfile) >= sizeof(sigfilebuf))
+		if ((nr = snprintf(sigfilebuf, sizeof(sigfilebuf), "%s.sig",
+		    msgfile)) == -1 || nr >= sizeof(sigfilebuf))
 			errx(1, "path too long");
 		sigfile = sigfilebuf;
 	}

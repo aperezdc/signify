@@ -23,15 +23,7 @@ S := crypto_api.c \
 		 signify.c
 
 ifeq ($(strip $(VERIFY_ONLY)),)
-S += ohash_init.c \
-     ohash_enum.c \
-     ohash_delete.c \
-     ohash_entries.c \
-     ohash_qlookup.c \
-     ohash_qlookupi.c \
-     ohash_interval.c \
-     ohash_lookup_interval.c \
-     ohash_do.c
+S += ohash.c
 else
      CPPFLAGS += -DVERIFY_ONLY=1
      $(warning )

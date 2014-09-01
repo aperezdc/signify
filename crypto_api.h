@@ -9,7 +9,7 @@
 #define crypto_api_h
 
 #include <stdint.h>
-#include <bsd/stdlib.h>
+#include <stdlib.h>
 
 typedef int32_t crypto_int32;
 typedef uint32_t crypto_uint32;
