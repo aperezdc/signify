@@ -46,6 +46,12 @@ endif
 
 O := $(patsubst %.c,%.o,$S)
 
+PKG_VER    := 0.7
+PKG_CHECK  := $(shell pkg-config libbsd --atleast-version=$(PKG_VER) && echo ok)
+ifneq ($(strip $(PKG_CHECK)),ok)
+$(error libbsd is not installed or version is older than $(PKG_VER))
+endif
+
 PKG_CFLAGS := $(shell pkg-config libbsd --cflags)
 PKG_LDLIBS := $(shell pkg-config libbsd --libs)
 
