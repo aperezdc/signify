@@ -1,4 +1,4 @@
-/*	$OpenBSD: sha2.c,v 1.18 2014/07/20 04:22:34 guenther Exp $	*/
+/*	$OpenBSD: sha2.c,v 1.22 2014/12/19 15:14:04 tedu Exp $	*/
 
 /*
  * FILE:	sha2.c
@@ -52,6 +52,11 @@
  *   #define SHA2_UNROLL_TRANSFORM
  *
  */
+#ifndef SHA2_SMALL
+#if defined(__amd64__) || defined(__i386__)
+#define SHA2_UNROLL_TRANSFORM
+#endif
+#endif
 
 /*** SHA-224/256/384/512 Machine Architecture Definitions *****************/
 /*
