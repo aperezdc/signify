@@ -1,4 +1,4 @@
-/*	$OpenBSD: helper.c,v 1.11 2014/04/03 17:55:27 beck Exp $ */
+/*	$OpenBSD: helper.c,v 1.13 2015/01/16 16:48:51 deraadt Exp $ */
 
 /*
  * Copyright (c) 2000 Poul-Henning Kamp <phk@FreeBSD.org>
@@ -21,7 +21,7 @@
  * can buy me a beer in return. Poul-Henning Kamp
  */
 
-#include <sys/param.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 
 #include <errno.h>
@@ -32,6 +32,8 @@
 #include <unistd.h>
 
 #include "hashinc"
+
+#define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 
 /* ARGSUSED */
 char *
@@ -50,7 +52,7 @@ HASHEnd(HASH_CTX *ctx, char *buf)
 		buf[i + i + 1] = hex[digest[i] & 0x0f];
 	}
 	buf[i + i] = '\0';
-	memset(digest, 0, sizeof(digest));
+	explicit_bzero(digest, sizeof(digest));
 	return (buf);
 }
 
@@ -79,7 +81,7 @@ HASHFileChunk(const char *filename, char *buf, off_t off, off_t len)
 		return (NULL);
 	}
 
-	while ((nr = read(fd, buffer, MIN(sizeof(buffer), len))) > 0) {
+	while ((nr = read(fd, buffer, MINIMUM(sizeof(buffer), len))) > 0) {
 		HASHUpdate(&ctx, buffer, (size_t)nr);
 		if (len > 0 && (len -= nr) == 0)
 			break;

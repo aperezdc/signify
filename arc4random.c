@@ -1,9 +1,10 @@
-/*	$OpenBSD: arc4random.c,v 1.50 2014/07/21 18:13:12 deraadt Exp $	*/
+/*	$OpenBSD: arc4random.c,v 1.52 2015/01/16 16:48:51 deraadt Exp $	*/
 
 /*
  * Copyright (c) 1996, David Mazieres <dm@uun.org>
  * Copyright (c) 2008, Damien Miller <djm@openbsd.org>
  * Copyright (c) 2013, Markus Friedl <markus@openbsd.org>
+ * Copyright (c) 2014, Theo de Raadt <deraadt@openbsd.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -30,7 +31,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/param.h>
 #include <sys/time.h>
 
 #define KEYSTREAM_ONLY
