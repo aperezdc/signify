@@ -1,4 +1,4 @@
-/* $OpenBSD: ge25519.h,v 1.4 2015/02/16 18:26:26 miod Exp $ */
+/* $OpenBSD: ge25519.h,v 1.2 2015/02/16 18:26:26 miod Exp $ */
 
 /*
  * Public Domain, Authors: Daniel J. Bernstein, Niels Duif, Tanja Lange,

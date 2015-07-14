@@ -1,4 +1,4 @@
-/* $OpenBSD: sc25519.c,v 1.3 2013/12/09 11:03:45 markus Exp $ */
+/* $OpenBSD: sc25519.c,v 1.1 2014/07/22 00:41:19 deraadt Exp $ */
 
 /*
  * Public Domain, Authors: Daniel J. Bernstein, Niels Duif, Tanja Lange,

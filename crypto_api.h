@@ -1,4 +1,4 @@
-/* $OpenBSD: crypto_api.h,v 1.3 2013/12/17 10:36:38 markus Exp $ */
+/* $OpenBSD: crypto_api.h,v 1.1 2014/07/22 00:41:19 deraadt Exp $ */
 
 /*
  * Assembled from generated headers and source files by Markus Friedl.
