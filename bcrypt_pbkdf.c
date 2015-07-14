@@ -24,7 +24,6 @@
 #include <string.h>
 #include <bsd/libutil.h>
 
-extern void explicit_bzero(void *p, size_t n);
 #define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*
