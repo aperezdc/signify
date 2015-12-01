@@ -1,0 +1,16 @@
+language: c
+compiler:
+    - clang
+    - gcc
+env:
+    - BOUNDS_CHECKING=0 LTO=0
+    - BOUNDS_CHECKING=0 LTO=1
+    - BOUNDS_CHECKING=1 LTO=0
+    - BOUNDS_CHECKING=1 LTO=1
+sudo: false
+addons:
+    apt:
+        packages:
+            - libbsd-dev
+script:
+    make LTO=${LTO} BOUNDS_CHECKING=${BOUNDS_CHECKING}
