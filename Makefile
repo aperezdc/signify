@@ -61,7 +61,7 @@ else
      $(warning )
 endif
 
-ifeq ($(strip $(BOUNDS_CHECKING)),)
+ifeq ($(strip $(BOUNDS_CHECKING)),1)
     CPPFLAGS += -DCOMPAT_BOUNDS_CHECKING
 endif
 
