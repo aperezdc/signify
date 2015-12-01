@@ -25,8 +25,27 @@ S := crypto_api.c \
 
 CPPFLAGS += -include compat.h
 
-ifneq ($(strip $(PLEDGE)),)
-S += pledge_$(PLEDGE).c
+PLEDGE := $(strip $(PLEDGE))
+ifneq ($(PLEDGE),)
+    S += pledge_$(PLEDGE).c
+endif
+
+
+all: signify
+
+
+# In order to use libwaive, we need libseccomp and making sure that the
+# Git submodule corresponding to libwaive is properly checked out.
+ifeq ($(PLEDGE),waive)
+SECCOMP_CFLAGS := $(shell pkg-config libseccomp --cflags)
+SECCOMP_LIBS   := $(shell pkg-config libseccomp --libs)
+CFLAGS  += $(SECCOMP_CFLAGS) -pthread
+LDFLAGS += $(SECCOMP_LIBS) -pthread
+S       += libwaive/waive.c
+
+libwaive/waive.c: .gitmodules
+	git submodule init && git submodule update libwaive
+	touch $@
 endif
 
 ifeq ($(strip $(VERIFY_ONLY)),)
@@ -61,8 +80,6 @@ endif
 
 PKG_CFLAGS := $(shell pkg-config libbsd --cflags)
 PKG_LDLIBS := $(shell pkg-config libbsd --libs)
-
-all: signify
 
 signify: $O
 	$(CC) $(LDFLAGS) -o $@ $^ $(PKG_LDLIBS)

@@ -34,6 +34,9 @@ The following options can be passed to Make:
     system call. For the moment the only supported values is:
 
       - `noop` *(default)*: Uses an implementation which does nothing
+      - `waive` *(Linux-only)*: Uses
+        [libwaive](https://github.com/dimkr/libwaive), which itself uses
+        [seccomp filters](https://en.wikipedia.org/wiki/Seccomp).
 
     To use your own implementation, use an empty value, and pass
     the needed flags for linking its code. For example:

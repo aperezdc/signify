@@ -1,0 +1,3 @@
+[submodule "libwaive"]
+	path = libwaive
+	url = https://github.com/dimkr/libwaive
