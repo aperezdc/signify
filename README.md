@@ -27,9 +27,22 @@ The following options can be passed to Make:
     must have support for this. Recent binutils and GCC/Clang are
     known to work.
 
-* `EXTRA_CFLAGS=…`
+* `PLEDGE=…`
 
-    Additional flags to be passed to the compiler.
+    Choose among one of the alternative implementations of the
+    [pledge()](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2)
+    system call. For the moment the only supported values is:
+
+      - `noop` *(default)*: Uses an implementation which does nothing
+
+    To use your own implementation, use an empty value, and pass
+    the needed flags for linking its code. For example:
+    `make PLEDGE='' EXTRA_LDFLAGS=my-pledge.o`.
+
+* `EXTRA_CFLAGS=…`, `EXTRA_LDFLAGS=…`
+
+    Additional flags to be passed to the compiler and the linker,
+    repectively.
 
 For example, you can build a size-optimized version with:
 

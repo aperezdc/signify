@@ -37,7 +37,6 @@
 #ifndef _SHA2_H
 #define _SHA2_H
 
-extern void explicit_bzero(void *buf, size_t len);
 
 /*** SHA-256/384/512 Various Length Definitions ***********************/
 #define SHA224_BLOCK_LENGTH		64

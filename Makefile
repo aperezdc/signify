@@ -3,24 +3,31 @@
 # Adrian Perez, 2014-01-14 14:33
 #
 
+PLEDGE ?= noop
 CFLAGS += $(EXTRA_CFLAGS)
 LDFLAGS += $(EXTRA_LDFLAGS)
 
 S := crypto_api.c \
      mod_ed25519.c \
-		 mod_ge25519.c \
-		 fe25519.c \
-		 sc25519.c \
-		 smult_curve25519_ref.c \
-		 bcrypt_pbkdf.c \
-		 timingsafe_bcmp.c \
-		 explicit_bzero.c \
-		 blowfish.c \
-		 base64.c \
-		 sha2.c \
-		 sha256hl.c \
-		 sha512hl.c \
-		 signify.c
+	 mod_ge25519.c \
+	 fe25519.c \
+	 sc25519.c \
+	 smult_curve25519_ref.c \
+	 bcrypt_pbkdf.c \
+	 timingsafe_bcmp.c \
+	 explicit_bzero.c \
+	 blowfish.c \
+	 base64.c \
+	 sha2.c \
+	 sha256hl.c \
+	 sha512hl.c \
+	 signify.c
+
+CPPFLAGS += -include compat.h
+
+ifneq ($(strip $(PLEDGE)),)
+S += pledge_$(PLEDGE).c
+endif
 
 ifeq ($(strip $(VERIFY_ONLY)),)
 S += ohash.c
@@ -36,7 +43,7 @@ else
 endif
 
 ifeq ($(strip $(BOUNDS_CHECKING)),)
-    CPPFLAGS += -D'__bounded__(a,b,c)='
+    CPPFLAGS += -DCOMPAT_BOUNDS_CHECKING
 endif
 
 ifneq ($(strip $(LTO)),)
