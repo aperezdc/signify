@@ -10,8 +10,6 @@
 
 #include "crypto_api.h"
 
-extern int timingsafe_bcmp(const void *b1, const void *b2, size_t n);
-
 int
 crypto_hash_sha512(unsigned char *out, const unsigned char *in,
     unsigned long long inlen)
