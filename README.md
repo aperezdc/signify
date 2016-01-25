@@ -21,6 +21,31 @@ The following options can be passed to Make:
     Enables bounds-checking using `__attribute__((bounded))`. Your
     compiler must have support for this. Clang 3.4 is known to work.
 
+* `BUNDLED_LIBBSD=1`
+
+    Downloads and builds [libbsd](http://libbsd.freedesktop.org/wiki/),
+    and links it statically into Signify. This can be used when the version
+    installed in the system is an unsupported version, or when installing it
+    in the system is not desirable.
+
+    Enabling this options needs `wget`, `xz`, `tar`, and `gpg` installed in
+    the build system. To avoid downloading files while building, there are
+    two options:
+
+      - `make BUNDLED_LIBBSD=1 libbsd-print-urls` will print the URLs
+        of the files which need to be downloaded, one per line.
+      - `make BUNDLED_LIBBSD=1 libbsd-download` will download the needed
+        files.
+
+    Pre-downloading the files will avoid hitting the network during build, but
+    will still check the PGP signature of the `libbsd` tarball.
+
+* `MUSL=1`
+
+    Enable linking against the [Musl libc](http://www.musl-libc.org/). At the
+    moment this needs a patched `libbsd`, so enabling this option will
+    automatically set `BUNDLED_LIBBSD=1` and patch the locally-built version.
+
 * `LTO=1`
 
     Perform Link-Time Optimizations. Both your compiler *and* linker

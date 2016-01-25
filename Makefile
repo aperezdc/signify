@@ -1,11 +1,17 @@
-#
-# Makefile
-# Adrian Perez, 2014-01-14 14:33
-#
+##################################################################
+# The following variables may be overriden in the command line:  #
+#                                                                #
+MUSL           ?= 0
+BUNDLED_LIBBSD ?= 0
+PLEDGE         ?= noop
+libbsd_VERSION ?= 0.8.1
+libbsd_BASEURL ?= http://libbsd.freedesktop.org/releases/
+#                                                                #
+##################################################################
 
-PLEDGE ?= noop
-CFLAGS += $(EXTRA_CFLAGS)
-LDFLAGS += $(EXTRA_LDFLAGS)
+CFLAGS   += $(EXTRA_CFLAGS)
+LDFLAGS  += $(EXTRA_LDFLAGS)
+CPPFLAGS += -include compat.h
 
 S := crypto_api.c \
      mod_ed25519.c \
@@ -23,19 +29,109 @@ S := crypto_api.c \
 	 sha512hl.c \
 	 signify.c
 
-CPPFLAGS += -include compat.h
-
 PLEDGE := $(strip $(PLEDGE))
 ifneq ($(PLEDGE),)
     S += pledge_$(PLEDGE).c
 endif
 
+MUSL := $(strip $(MUSL))
+ifeq ($(MUSL),1)
+  CC = musl-gcc
+  BUNDLED_LIBBSD := 1
+endif
+
+BUNDLED_LIBBSD := $(strip $(BUNDLED_LIBBSD))
+
 
 all: signify
+clean:
+
+
+# Building a static binary with Musl requires a patched libbsd.
+# The rules take care of:
+#
+#   - Downloading a release (needed tools: wget).
+#   - Check the PGP signature (needed tools: gpg).
+#   - Unpack the tarball (needed tools: xz, tar).
+#   - Patch libbsd (needed tools: patch).
+#   - Build libbsd.
+#
+# TODO: Also support curl for downloads.
+#
+ifeq ($(BUNDLED_LIBBSD),1)
+
+libbsd_VERSION  := $(strip $(libbsd_VERSION))
+libbsd_BASEURL  := $(strip $(libbsd_BASEURL))
+libbsd_PATCH    := libbsd-$(libbsd_VERSION)-musl.patch
+libbsd_TAR_NAME := libbsd-$(libbsd_VERSION).tar.xz
+libbsd_ASC_NAME := $(libbsd_TAR_NAME).asc
+libbsd_TAR_URL  := $(libbsd_BASEURL)/$(libbsd_TAR_NAME)
+libbsd_ASC_URL  := $(libbsd_BASEURL)/$(libbsd_ASC_NAME)
+libbsd_ARLIB    := libbsd-prefix/lib/libbsd.a
+libbsd_INCLUDE  := libbsd-prefix/include
+
+$(libbsd_ASC_NAME):
+	wget -cO $@ '$(libbsd_ASC_URL)'
+	touch $@
+
+$(libbsd_TAR_NAME): $(libbsd_ASC_NAME)
+	wget -cO $@ '$(libbsd_TAR_URL)'
+	gpg --verify $(libbsd_ASC_NAME)
+	touch $@
+
+libbsd-download: $(libbsd_TAR_NAME)
+
+libbsd-clean:
+	$(RM) -r libbsd-prefix libbsd-$(libbsd_VERSION)
+
+clean: libbsd-clean
+
+libbsd-print-urls:
+	@echo '$(libbsd_ASC_URL)'
+	@echo '$(libbsd_TAR_URL)'
+
+libbsd-$(libbsd_VERSION)/configure: $(libbsd_TAR_NAME)
+	unxz -c $< | tar -xf -
+	touch $@
+
+libbsd-$(libbsd_VERSION)/.patched: libbsd-0.8.1/configure $(libbsd_PATCH)
+ifeq ($(MUSL),1)
+	patch -p0 < $(libbsd_PATCH)
+endif
+	touch $@
+
+libbsd-$(libbsd_VERSION)/Makefile: libbsd-$(libbsd_VERSION)/.patched
+	( cd libbsd-$(libbsd_VERSION) && ./configure \
+		--enable-static --disable-shared \
+		--prefix=$$(pwd)/../libbsd-prefix \
+		CC=$(CC) LD=$(CC) )
+
+$(libbsd_ARLIB) $(libbsd_INCLUDE)/bsd/bsd.h: libbsd-$(libbsd_VERSION)/Makefile
+	$(MAKE) -C libbsd-$(libbsd_VERSION) install
+
+.PHONY: libbsd-download libbsd-clean libbsd-print-urls
+
+PKG_CFLAGS := -isystem libbsd-prefix/include
+PKG_LDLIBS := libbsd-prefix/lib/libbsd.a
+
+$S: $(libbsd_INCLUDE)/bsd/bsd.h
+
+else
+
+PKG_VER    := 0.7
+PKG_CHECK  := $(shell pkg-config libbsd --atleast-version=$(PKG_VER) && echo ok)
+ifneq ($(strip $(PKG_CHECK)),ok)
+  $(error libbsd is not installed or version is older than $(PKG_VER))
+endif
+PKG_CFLAGS := $(shell pkg-config libbsd --cflags)
+PKG_LDLIBS := $(shell pkg-config libbsd --libs)
+
+endif
 
 
 # In order to use libwaive, we need libseccomp and making sure that the
 # Git submodule corresponding to libwaive is properly checked out.
+#
 ifeq ($(PLEDGE),waive)
 SECCOMP_CFLAGS := $(shell pkg-config libseccomp --cflags)
 SECCOMP_LIBS   := $(shell pkg-config libseccomp --libs)
@@ -72,21 +168,16 @@ endif
 
 O := $(patsubst %.c,%.o,$S)
 
-PKG_VER    := 0.7
-PKG_CHECK  := $(shell pkg-config libbsd --atleast-version=$(PKG_VER) && echo ok)
-ifneq ($(strip $(PKG_CHECK)),ok)
-$(error libbsd is not installed or version is older than $(PKG_VER))
-endif
 
-PKG_CFLAGS := $(shell pkg-config libbsd --cflags)
-PKG_LDLIBS := $(shell pkg-config libbsd --libs)
-
-signify: $O
-	$(CC) $(LDFLAGS) -o $@ $^ $(PKG_LDLIBS)
 signify: CFLAGS += $(PKG_CFLAGS) -Wall
+signify: $O $(PKG_LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $^
 
-clean:
+clean-signify:
 	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c
+
+clean: clean-signify
+.PHONY: clean-signify
 
 signify.1.gz: signify.1
 	gzip -9c $< > $@
