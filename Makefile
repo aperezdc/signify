@@ -36,7 +36,7 @@ endif
 
 MUSL := $(strip $(MUSL))
 ifeq ($(MUSL),1)
-  CC = musl-gcc
+  CC ?= musl-gcc
   BUNDLED_LIBBSD := 1
 endif
 
