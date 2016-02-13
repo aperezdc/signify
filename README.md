@@ -40,6 +40,17 @@ The following options can be passed to Make:
     Pre-downloading the files will avoid hitting the network during build, but
     will still check the PGP signature of the `libbsd` tarball.
 
+* `BUNDLED_LIBBSD_VERIFY_GPG=0`
+
+    Disables checking the PGP signature of the bundled
+    [libbsd](http://libbsd.freedesktop.org/wiki/) tarball. This avoids the
+    need for GnuPG to be installed for building.
+
+* `BUNDLED_LIBBSD_VERIFY_GPG=/path/to/gpg`
+
+    Set the path to the `gpg` binary used for checking signatures. If not
+    specified, the program is searched in the `$PATH`.
+
 * `MUSL=1`
 
     Enable linking against the [Musl libc](http://www.musl-libc.org/). At the

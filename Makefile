@@ -41,6 +41,14 @@ ifeq ($(MUSL),1)
 endif
 
 BUNDLED_LIBBSD := $(strip $(BUNDLED_LIBBSD))
+BUNDLED_LIBBSD_VERIFY_GPG := $(strip $(BUNDLED_LIBBSD_VERIFY_GPG))
+
+ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
+  ifeq ($(BUNDLED_LIBBSD_VERIFY_GPG),)
+    # Try to detect whether "gpg" is installed.
+    BUNDLED_LIBBSD_VERIFY_GPG := $(shell which gpg 2> /dev/null || echo 0)
+  endif
+endif
 
 
 all: signify
@@ -64,19 +72,23 @@ libbsd_VERSION  := $(strip $(libbsd_VERSION))
 libbsd_BASEURL  := $(strip $(libbsd_BASEURL))
 libbsd_PATCH    := libbsd-$(libbsd_VERSION)-musl.patch
 libbsd_TAR_NAME := libbsd-$(libbsd_VERSION).tar.xz
-libbsd_ASC_NAME := $(libbsd_TAR_NAME).asc
 libbsd_TAR_URL  := $(libbsd_BASEURL)/$(libbsd_TAR_NAME)
-libbsd_ASC_URL  := $(libbsd_BASEURL)/$(libbsd_ASC_NAME)
 libbsd_ARLIB    := libbsd-prefix/lib/libbsd.a
 libbsd_INCLUDE  := libbsd-prefix/include
 
+ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
+libbsd_ASC_NAME := $(libbsd_TAR_NAME).asc
+libbsd_ASC_URL  := $(libbsd_BASEURL)/$(libbsd_ASC_NAME)
 $(libbsd_ASC_NAME):
 	wget -cO $@ '$(libbsd_ASC_URL)'
 	touch $@
+endif
 
 $(libbsd_TAR_NAME): $(libbsd_ASC_NAME)
 	wget -cO $@ '$(libbsd_TAR_URL)'
-	gpg --verify $(libbsd_ASC_NAME)
+ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
+	$(BUNDLED_LIBBSD_VERIFY_GPG) --verify $(libbsd_ASC_NAME)
+endif
 	touch $@
 
 libbsd-download: $(libbsd_TAR_NAME)
@@ -87,7 +99,9 @@ libbsd-clean:
 clean: libbsd-clean
 
 libbsd-print-urls:
+ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
 	@echo '$(libbsd_ASC_URL)'
+endif
 	@echo '$(libbsd_TAR_URL)'
 
 libbsd-$(libbsd_VERSION)/configure: $(libbsd_TAR_NAME)
