@@ -24,7 +24,8 @@ static const struct {
     const char *pledge_name;
     int         waive_flag;
 } flag_table[] = {
-    { "stdio",     WAIVE_PIPE  },
+    { "stdio",     WAIVE_PIPE  |
+                   WAIVE_SOCKET},
     { "rpath",     WAIVE_OPEN  },
     { "wpath",     WAIVE_OPEN  },
     { "cpath",     0           },
@@ -32,7 +33,8 @@ static const struct {
     { "inet",      WAIVE_INET  },
     { "fattr",     0           },
     { "flock",     WAIVE_OPEN  },
-    { "unix",      WAIVE_UN    },
+    { "unix",      WAIVE_UN    |
+                   WAIVE_SOCKET},
     { "dns",       WAIVE_INET  },
     { "getpw",     WAIVE_OPEN  },
     { "sendfd",    0           },
