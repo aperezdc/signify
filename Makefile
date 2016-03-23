@@ -125,20 +125,22 @@ $(libbsd_ARLIB) $(libbsd_INCLUDE)/bsd/bsd.h: libbsd-$(libbsd_VERSION)/Makefile
 
 .PHONY: libbsd-download libbsd-clean libbsd-print-urls
 
-PKG_CFLAGS := -isystem libbsd-prefix/include
-PKG_LDLIBS := libbsd-prefix/lib/libbsd.a
+LIBBSD_DEPS    := libbsd-prefix/lib/libbsd.a
+LIBBSD_CFLAGS  := -isystem libbsd-prefix/include
+LIBBSD_LDFLAGS :=
 
 $S: $(libbsd_INCLUDE)/bsd/bsd.h
 
 else
 
-PKG_VER    := 0.7
-PKG_CHECK  := $(shell pkg-config libbsd --atleast-version=$(PKG_VER) && echo ok)
-ifneq ($(strip $(PKG_CHECK)),ok)
-  $(error libbsd is not installed or version is older than $(PKG_VER))
+LIBBSD_PKG_VERSION := 0.7
+LIBBSD_PKG_CHECK   := $(shell pkg-config libbsd --atleast-version=$(LIBBSD_PKG_VERSION) && echo ok)
+ifneq ($(strip $(LIBBSD_PKG_CHECK)),ok)
+  $(error libbsd is not installed or version is older than $(LIBBSD_PKG_VERSION))
 endif
-PKG_CFLAGS := $(shell pkg-config libbsd --cflags)
-PKG_LDLIBS := $(shell pkg-config libbsd --libs)
+LIBBSD_DEPS    :=
+LIBBSD_CFLAGS  := $(shell pkg-config libbsd --cflags)
+LIBBSD_LDFLAGS := $(shell pkg-config libbsd --libs)
 
 endif
 
@@ -183,9 +185,9 @@ endif
 O := $(patsubst %.c,%.o,$S)
 
 
-signify: CFLAGS += $(PKG_CFLAGS) -Wall
-signify: $O $(PKG_LDLIBS)
-	$(CC) $(LDFLAGS) -o $@ $^
+signify: CFLAGS += $(LIBBSD_CFLAGS) -Wall
+signify: $O $(LIBBSD_DEPS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBBSD_LDFLAGS)
 
 clean-signify:
 	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c
