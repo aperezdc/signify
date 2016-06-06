@@ -1,8 +1,4 @@
 language: c
-addons:
-  apt:
-    packages:
-      - libbsd
 compiler:
   - clang
   - gcc
