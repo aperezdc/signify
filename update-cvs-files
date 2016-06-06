@@ -7,7 +7,7 @@
 #
 set -e
 
-: ${CVSWEB_URL:='http://openbsd.cs.toronto.edu/cgi-bin/cvsweb'}
+: ${CVSWEB_URL:='http://cvsweb.openbsd.org/cgi-bin/cvsweb'}
 CVSWEB_URL="${CVSWEB_URL}/~checkout~"
 
 while read -r cvs_path ; do
