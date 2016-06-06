@@ -4,7 +4,7 @@
 MUSL           ?= 0
 BUNDLED_LIBBSD ?= 0
 PLEDGE         ?= noop
-libbsd_VERSION ?= 0.8.1
+libbsd_VERSION ?= 0.8.2
 libbsd_BASEURL ?= http://libbsd.freedesktop.org/releases/
 #                                                                #
 ##################################################################
