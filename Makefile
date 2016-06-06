@@ -70,7 +70,7 @@ ifeq ($(BUNDLED_LIBBSD),1)
 
 libbsd_VERSION  := $(strip $(libbsd_VERSION))
 libbsd_BASEURL  := $(strip $(libbsd_BASEURL))
-libbsd_PATCH    := libbsd-$(libbsd_VERSION)-musl.patch
+libbsd_PATCHES  := $(wildcard patches/libbsd-$(libbsd_VERSION)/*.patch)
 libbsd_TAR_NAME := libbsd-$(libbsd_VERSION).tar.xz
 libbsd_TAR_URL  := $(libbsd_BASEURL)/$(libbsd_TAR_NAME)
 libbsd_ARLIB    := libbsd-prefix/lib/libbsd.a
@@ -108,9 +108,10 @@ libbsd-$(libbsd_VERSION)/configure: $(libbsd_TAR_NAME)
 	unxz -c $< | tar -xf -
 	touch $@
 
-libbsd-$(libbsd_VERSION)/.patched: libbsd-$(libbsd_VERSION)/configure $(libbsd_PATCH)
+libbsd-$(libbsd_VERSION)/.patched: libbsd-$(libbsd_VERSION)/configure $(libbsd_PATCHES)
 ifeq ($(MUSL),1)
-	patch -p0 < $(libbsd_PATCH)
+	@( cd libbsd-$(libbsd_VERSION) && for p in $(libbsd_PATCHES) ; do \
+		echo "==> $$p" && patch -p1 < "$(CURDIR)/$$p" ; done )
 endif
 	touch $@
 
