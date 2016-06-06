@@ -6,4 +6,4 @@ addons:
 compiler:
   - clang
   - gcc
-script: make
+script: make BUNDLED_LIBBSD=1
