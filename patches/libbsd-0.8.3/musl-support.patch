@@ -1,0 +1,409 @@
+diff -Naur libbsd-0.8.3-orig/include/bsd/err.h libbsd-0.8.3/include/bsd/err.h
+--- libbsd-0.8.3-orig/include/bsd/err.h	2015-12-14 01:58:51.000000000 +0200
++++ libbsd-0.8.3/include/bsd/err.h	2016-06-06 15:45:07.008119221 +0300
+@@ -42,7 +42,11 @@
+ 
+ #include <stdarg.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ void warnc(int code, const char *format, ...)
+ 	__printflike(2, 3);
+ void vwarnc(int code, const char *format, va_list ap)
+@@ -51,6 +55,10 @@
+ 	__printflike(3, 4);
+ void verrc(int status, int code, const char *format, va_list ap)
+ 	__printflike(3, 0);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/libutil.h libbsd-0.8.3/include/bsd/libutil.h
+--- libbsd-0.8.3-orig/include/bsd/libutil.h	2015-09-22 20:56:09.000000000 +0300
++++ libbsd-0.8.3/include/bsd/libutil.h	2016-06-06 15:45:07.008119221 +0300
+@@ -40,7 +40,6 @@
+ #define _LIBUTIL_H_
+ 
+ #include <features.h>
+-#include <sys/cdefs.h>
+ #include <sys/types.h>
+ #include <stdint.h>
+ #include <stdio.h>
+@@ -53,7 +52,11 @@
+ 	ino_t	pf_ino;
+ };
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ int humanize_number(char *buf, size_t len, int64_t bytes,
+     const char *suffix, int scale, int flags);
+ int expand_number(const char *_buf, uint64_t *_num);
+@@ -66,7 +69,11 @@
+ int pidfile_remove(struct pidfh *pfh);
+ 
+ char   *fparseln(FILE *, size_t *, size_t *, const char[3], int);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ /* humanize_number(3) */
+ #define HN_DECIMAL              0x01
+diff -Naur libbsd-0.8.3-orig/include/bsd/md5.h libbsd-0.8.3/include/bsd/md5.h
+--- libbsd-0.8.3-orig/include/bsd/md5.h	2016-03-27 13:21:36.000000000 +0300
++++ libbsd-0.8.3/include/bsd/md5.h	2016-06-06 15:45:07.008119221 +0300
+@@ -30,7 +30,11 @@
+ #include <sys/cdefs.h>
+ #include <sys/types.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ void	 MD5Init(MD5_CTX *);
+ void	 MD5Update(MD5_CTX *, const uint8_t *, size_t)
+ 		__attribute__((__bounded__(__string__,2,3)));
+@@ -49,6 +53,10 @@
+ char	*MD5Data(const uint8_t *, size_t, char *)
+ 		__attribute__((__bounded__(__string__,1,2)))
+ 		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif /* _MD5_H_ */
+diff -Naur libbsd-0.8.3-orig/include/bsd/nlist.h libbsd-0.8.3/include/bsd/nlist.h
+--- libbsd-0.8.3-orig/include/bsd/nlist.h	2015-09-22 20:56:09.000000000 +0300
++++ libbsd-0.8.3/include/bsd/nlist.h	2016-06-06 15:45:07.008119221 +0300
+@@ -30,8 +30,16 @@
+ #include <sys/cdefs.h>
+ #include <a.out.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ extern int nlist(const char *filename, struct nlist *list);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/readpassphrase.h libbsd-0.8.3/include/bsd/readpassphrase.h
+--- libbsd-0.8.3-orig/include/bsd/readpassphrase.h	2011-07-05 21:58:44.000000000 +0300
++++ libbsd-0.8.3/include/bsd/readpassphrase.h	2016-06-06 15:45:07.008119221 +0300
+@@ -31,11 +31,18 @@
+ #define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
+ #define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
+ 
+-#include <sys/cdefs.h>
+ #include <sys/types.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ char * readpassphrase(const char *, char *, size_t, int);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif /* !_READPASSPHRASE_H_ */
+diff -Naur libbsd-0.8.3-orig/include/bsd/stdio.h libbsd-0.8.3/include/bsd/stdio.h
+--- libbsd-0.8.3-orig/include/bsd/stdio.h	2015-09-23 08:59:34.000000000 +0300
++++ libbsd-0.8.3/include/bsd/stdio.h	2016-06-06 15:45:07.008119221 +0300
+@@ -41,7 +41,11 @@
+ #include <sys/cdefs.h>
+ #include <sys/types.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ const char *fmtcheck(const char *, const char *);
+ 
+ /* XXX: The function requires cooperation from the system libc to store the
+@@ -69,7 +73,11 @@
+ #define fwopen(cookie, fn) funopen(cookie, NULL, fn, NULL, NULL)
+ 
+ int fpurge(FILE *fp);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/stdlib.h libbsd-0.8.3/include/bsd/stdlib.h
+--- libbsd-0.8.3-orig/include/bsd/stdlib.h	2015-09-23 08:14:21.000000000 +0300
++++ libbsd-0.8.3/include/bsd/stdlib.h	2016-06-06 15:45:07.008119221 +0300
+@@ -46,7 +46,11 @@
+ #include <sys/stat.h>
+ #include <stdint.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ uint32_t arc4random(void);
+ void arc4random_stir(void);
+ void arc4random_addrandom(u_char *dat, int datlen);
+@@ -73,6 +77,10 @@
+                    const char **errstr);
+ 
+ char *getbsize(int *headerlenp, long *blocksizep);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/string.h libbsd-0.8.3/include/bsd/string.h
+--- libbsd-0.8.3-orig/include/bsd/string.h	2015-09-24 06:30:23.000000000 +0300
++++ libbsd-0.8.3/include/bsd/string.h	2016-06-06 15:45:07.008119221 +0300
+@@ -33,16 +33,23 @@
+ #ifndef LIBBSD_STRING_H
+ #define LIBBSD_STRING_H
+ 
+-#include <sys/cdefs.h>
+ #include <sys/types.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ size_t strlcpy(char *dst, const char *src, size_t siz);
+ size_t strlcat(char *dst, const char *src, size_t siz);
+ char *strnstr(const char *str, const char *find, size_t str_len);
+ void strmode(mode_t mode, char *str);
+ 
+ void explicit_bzero(void *buf, size_t len);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/stringlist.h libbsd-0.8.3/include/bsd/stringlist.h
+--- libbsd-0.8.3-orig/include/bsd/stringlist.h	2015-09-22 20:56:09.000000000 +0300
++++ libbsd-0.8.3/include/bsd/stringlist.h	2016-06-06 15:45:07.008119221 +0300
+@@ -43,12 +43,20 @@
+ 	size_t	  sl_cur;
+ } StringList;
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ StringList	*sl_init(void);
+ int		 sl_add(StringList *, char *);
+ void		 sl_free(StringList *, int);
+ char		*sl_find(StringList *, const char *);
+ int		 sl_delete(StringList *, const char *, int);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif /* _STRINGLIST_H */
+diff -Naur libbsd-0.8.3-orig/include/bsd/sys/cdefs.h libbsd-0.8.3/include/bsd/sys/cdefs.h
+--- libbsd-0.8.3-orig/include/bsd/sys/cdefs.h	2015-09-23 08:59:27.000000000 +0300
++++ libbsd-0.8.3/include/bsd/sys/cdefs.h	2016-06-06 15:45:07.008119221 +0300
+@@ -25,9 +25,7 @@
+  */
+ 
+ #ifdef LIBBSD_OVERLAY
+-#include_next <sys/cdefs.h>
+ #else
+-#include <sys/cdefs.h>
+ #endif
+ 
+ #ifndef LIBBSD_SYS_CDEFS_H
+diff -Naur libbsd-0.8.3-orig/include/bsd/unistd.h libbsd-0.8.3/include/bsd/unistd.h
+--- libbsd-0.8.3-orig/include/bsd/unistd.h	2015-12-14 01:58:51.000000000 +0200
++++ libbsd-0.8.3/include/bsd/unistd.h	2016-06-06 15:45:07.008119221 +0300
+@@ -45,7 +45,11 @@
+ #define S_ISTXT S_ISVTX
+ #endif
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ extern int optreset;
+ 
+ #ifdef LIBBSD_OVERLAY
+@@ -68,6 +72,10 @@
+ 	__printflike(1, 2);
+ 
+ int getpeereid(int s, uid_t *euid, gid_t *egid);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+diff -Naur libbsd-0.8.3-orig/include/bsd/vis.h libbsd-0.8.3/include/bsd/vis.h
+--- libbsd-0.8.3-orig/include/bsd/vis.h	2011-07-05 21:58:44.000000000 +0300
++++ libbsd-0.8.3/include/bsd/vis.h	2016-06-06 15:45:07.008119221 +0300
+@@ -74,7 +74,11 @@
+ 
+ #include <sys/cdefs.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ char	*vis(char *, int, int, int);
+ int	strvis(char *, const char *, int);
+ int	strvisx(char *, const char *, size_t, int);
+@@ -83,6 +87,10 @@
+ int	strunvisx(char *, const char *, int);
+ ssize_t strnunvis(char *, const char *, size_t);
+ int	unvis(char *, int, int *, int);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif /* !_VIS_H_ */
+diff -Naur libbsd-0.8.3-orig/include/bsd/wchar.h libbsd-0.8.3/include/bsd/wchar.h
+--- libbsd-0.8.3-orig/include/bsd/wchar.h	2015-09-22 20:56:09.000000000 +0300
++++ libbsd-0.8.3/include/bsd/wchar.h	2016-06-06 15:45:07.008119221 +0300
+@@ -43,12 +43,20 @@
+ #include <sys/cdefs.h>
+ #include <sys/types.h>
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ wchar_t *fgetwln(FILE *stream, size_t *len);
+ 
+ size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t size);
+ size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t size);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif
+ #endif
+diff -Naur libbsd-0.8.3-orig/src/flopen.c libbsd-0.8.3/src/flopen.c
+--- libbsd-0.8.3-orig/src/flopen.c	2016-03-27 14:33:21.000000000 +0300
++++ libbsd-0.8.3/src/flopen.c	2016-06-06 15:45:07.011452642 +0300
+@@ -30,7 +30,7 @@
+ 
+ #include <sys/file.h>
+ #include <sys/stat.h>
+-
++#include <bits/fcntl.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <stdarg.h>
+diff -Naur libbsd-0.8.3-orig/src/funopen.c libbsd-0.8.3/src/funopen.c
+--- libbsd-0.8.3-orig/src/funopen.c	2015-09-22 20:56:09.000000000 +0300
++++ libbsd-0.8.3/src/funopen.c	2016-06-06 15:45:07.011452642 +0300
+@@ -138,5 +138,4 @@
+ 	return fopencookie(cookiewrap, mode, funcswrap);
+ }
+ #else
+-#error "Function funopen() needs to be ported."
+ #endif
+diff -Naur libbsd-0.8.3-orig/src/hash/sha512.h libbsd-0.8.3/src/hash/sha512.h
+--- libbsd-0.8.3-orig/src/hash/sha512.h	2016-03-27 13:21:37.000000000 +0300
++++ libbsd-0.8.3/src/hash/sha512.h	2016-06-06 15:45:07.011452642 +0300
+@@ -39,7 +39,11 @@
+ 	unsigned char buf[128];
+ } SHA512_CTX;
+ 
+-__BEGIN_DECLS
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ 
+ void	SHA512_Init(SHA512_CTX *);
+ void	SHA512_Update(SHA512_CTX *, const void *, size_t);
+@@ -48,6 +52,10 @@
+ char   *SHA512_File(const char *, char *);
+ char   *SHA512_FileChunk(const char *, char *, off_t, off_t);
+ char   *SHA512_Data(const void *, unsigned int, char *);
+-__END_DECLS
++
++#ifdef __cplusplus
++}
++#endif
++
+ 
+ #endif /* !_SHA512_H_ */
+diff -Naur libbsd-0.8.3-orig/src/nlist.c libbsd-0.8.3/src/nlist.c
+--- libbsd-0.8.3-orig/src/nlist.c	2016-03-27 14:33:21.000000000 +0300
++++ libbsd-0.8.3/src/nlist.c	2016-06-06 15:45:37.772259091 +0300
+@@ -40,7 +40,7 @@
+ 
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <a.out.h>
++#include <linux/a.out.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
