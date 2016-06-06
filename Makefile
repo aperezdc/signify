@@ -108,7 +108,7 @@ libbsd-$(libbsd_VERSION)/configure: $(libbsd_TAR_NAME)
 	unxz -c $< | tar -xf -
 	touch $@
 
-libbsd-$(libbsd_VERSION)/.patched: libbsd-0.8.1/configure $(libbsd_PATCH)
+libbsd-$(libbsd_VERSION)/.patched: libbsd-$(libbsd_VERSION)/configure $(libbsd_PATCH)
 ifeq ($(MUSL),1)
 	patch -p0 < $(libbsd_PATCH)
 endif
