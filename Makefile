@@ -4,6 +4,7 @@
 MUSL           ?= 0
 BUNDLED_LIBBSD ?= 0
 PLEDGE         ?= noop
+WGET           ?= wget
 libbsd_VERSION ?= 0.8.3
 libbsd_BASEURL ?= http://libbsd.freedesktop.org/releases/
 #                                                                #
@@ -80,7 +81,7 @@ ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
 libbsd_ASC_NAME := $(libbsd_TAR_NAME).asc
 libbsd_ASC_URL  := $(libbsd_BASEURL)/$(libbsd_ASC_NAME)
 $(libbsd_ASC_NAME):
-	wget -cO $@ '$(libbsd_ASC_URL)'
+	$(WGET) -cO $@ '$(libbsd_ASC_URL)'
 	touch $@
 endif
 
