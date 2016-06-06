@@ -189,7 +189,7 @@ O := $(patsubst %.c,%.o,$S)
 
 signify: CFLAGS += $(LIBBSD_CFLAGS) -Wall
 signify: $O $(LIBBSD_DEPS)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LIBBSD_LDFLAGS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBBSD_LDFLAGS) $(LDLIBS)
 
 clean-signify:
 	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c

@@ -88,6 +88,13 @@ For example, you can build a size-optimized version with:
     make EXTRA_CFLAGS='-Os -s' LTO=1
 
 
+## Troubleshooting
+
+* **Problem:** Undefined references to `clock_gettime`. <br>
+  **Solution:** Your system has an old `glibc` version, you need to pass
+  `LDLIBS=-lrt` to `make`.
+
+
 ## Other implementations
 
 * [asignify](https://github.com/vstakhov/asignify) can read signatures
