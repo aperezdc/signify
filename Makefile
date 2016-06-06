@@ -86,7 +86,7 @@ $(libbsd_ASC_NAME):
 endif
 
 $(libbsd_TAR_NAME): $(libbsd_ASC_NAME)
-	wget -cO $@ '$(libbsd_TAR_URL)'
+	$(WGET) -cO $@ '$(libbsd_TAR_URL)'
 ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
 	$(BUNDLED_LIBBSD_VERIFY_GPG) --verify $(libbsd_ASC_NAME)
 endif
