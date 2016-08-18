@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <bsd/readpassphrase.h>
 #include <bsd/libutil.h>
+#include <bsd/stdlib.h>
 #include "sha2.h"
 
 #include "crypto_api.h"
