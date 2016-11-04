@@ -1,3 +1,4 @@
+
 /*	$OpenBSD: explicit_bzero.c,v 1.4 2015/08/31 02:53:57 guenther Exp $ */
 /*
  * Public domain.

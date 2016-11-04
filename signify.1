@@ -1,4 +1,4 @@
-.\" $OpenBSD: signify.1,v 1.34 2016/05/11 18:07:28 deraadt Exp $
+.\" $OpenBSD: signify.1,v 1.40 2016/10/05 15:45:13 tedu Exp $
 .\"
 .\"Copyright (c) 2013 Marc Espie <espie@openbsd.org>
 .\"Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
@@ -14,7 +14,7 @@
 .\"WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 .\"ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\"OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-.Dd $Mdocdate: May 11 2016 $
+.Dd $Mdocdate: October 5 2016 $
 .Dt SIGNIFY 1
 .Os
 .Sh NAME
@@ -35,15 +35,16 @@
 .Fl s Ar seckey
 .Nm signify
 .Fl S
-.Op Fl e
+.Op Fl ez
 .Op Fl x Ar sigfile
 .Fl s Ar seckey
 .Fl m Ar message
 .Nm signify
 .Fl V
-.Op Fl eq
+.Op Fl eqz
+.Op Fl p Ar pubkey
+.Op Fl t Ar keytype
 .Op Fl x Ar sigfile
-.Fl p Ar pubkey
 .Fl m Ar message
 .Sh DESCRIPTION
 The
@@ -62,6 +63,11 @@ should be the signed output of
 .Xr sha256 1 .
 .It Fl G
 Generate a new key pair.
+Keynames should follow the convention of
+.Pa keyname.pub
+and
+.Pa keyname.sec
+for the public and secret keys, respectively.
 .It Fl S
 Sign the specified message file and create a signature.
 .It Fl V
@@ -104,10 +110,21 @@ Secret (private) key produced by
 and used by
 .Fl S
 to sign a message.
+.It Fl t Ar keytype
+When deducing the correct key to check a signature, make sure
+the actual key matches
+.Pa /etc/signify/*-keytype.pub .
 .It Fl x Ar sigfile
 The signature file to create or verify.
 The default is
 .Ar message Ns .sig .
+.It Fl z
+Sign and verify
+.Xr gzip 1
+archives, where the signing data
+is embedded in the
+.Xr gzip 1
+header.
 .El
 .Pp
 The key and signature files created by
@@ -115,10 +132,10 @@ The key and signature files created by
 have the same format.
 The first line of the file is a free form text comment that may be edited,
 so long as it does not exceed a single line.
-.\" Signature comments will be generated based on the name of the secret
-.\" key used for signing.
-.\" This comment can then be used as a hint for the name of the public key
-.\" when verifying.
+Signature comments will be generated based on the name of the secret
+key used for signing.
+This comment can then be used as a hint for the name of the public key
+when verifying.
 The second line of the file is the actual key or signature base64 encoded.
 .Sh EXIT STATUS
 .Ex -std signify
@@ -148,19 +165,37 @@ Verify a release directory containing
 .Pa SHA256.sig
 and a full set of release files:
 .Bd -literal -offset indent -compact
-$ signify \-C \-p /etc/signify/openbsd-56-base.pub \-x SHA256.sig
+$ signify \-C \-p /etc/signify/openbsd-61-base.pub \-x SHA256.sig
 Note that for non-OpenBSD operating systems, you will have to get the
 signing key yourself.
 .Ed
 .Pp
 Verify a bsd.rd before an upgrade:
 .Bd -literal -offset indent -compact
-$ signify \-C \-p /etc/signify/openbsd-56-base.pub \-x SHA256.sig bsd.rd
+$ signify \-C \-p /etc/signify/openbsd-61-base.pub \-x SHA256.sig bsd.rd
 .Ed
+.Pp
+Sign a gzip archive:
+.Bd -literal -offset indent -compact
+$ signify -Sz -s key-arc.sec -m in.tgz -x out.tgz
+.Ed
+.Pp
+Verify a gzip pipeline:
+.Bd -literal -offset indent -compact
+$ ftp url | signify -Vz -t arc | tar ztf -
+.Ed
+.Sh SEE ALSO
+.Xr fw_update 1 ,
+.Xr gzip 1 ,
+.Xr pkg_add 1 ,
+.Xr sha256 1
 .Sh HISTORY
 The
 .Nm
 command first appeared in
 .Ox 5.5 .
 .Sh AUTHORS
+.An -nosplit
 .An Ted Unangst Aq Mt tedu@openbsd.org
+and
+.An Marc Espie Aq Mt espie@openbsd.org .

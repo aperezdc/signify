@@ -1,3 +1,4 @@
+
 /* $OpenBSD: mod_ge25519.c,v 1.2 2014/01/08 05:51:35 deraadt Exp $ */
 
 /*

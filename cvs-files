@@ -25,6 +25,8 @@ src/usr.bin/signify/mod_ed25519.c
 src/usr.bin/signify/mod_ge25519.c
 src/usr.bin/signify/sc25519.c
 src/usr.bin/signify/sc25519.h
+src/usr.bin/signify/signify.h
 src/usr.bin/signify/signify.c
 src/usr.bin/signify/signify.1
 src/usr.bin/signify/smult_curve25519_ref.c
+src/usr.bin/signify/zsig.c

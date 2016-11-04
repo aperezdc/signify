@@ -28,7 +28,8 @@ S := crypto_api.c \
 	 sha2.c \
 	 sha256hl.c \
 	 sha512hl.c \
-	 signify.c
+	 signify.c \
+	 zsig.c
 
 PLEDGE := $(strip $(PLEDGE))
 ifneq ($(PLEDGE),)
