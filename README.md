@@ -23,7 +23,7 @@ the terms of the [BSD license](https://opensource.org/licenses/BSD-3-Clause).
 * [libbsd](http://libbsd.freedesktop.org/wiki/) 0.8 or newer.
 
 If your system does not provide a package for `libbsd`, it is possible to
-download and compile it automatically, check the [build options][#options]
+download and compile it automatically, check the [build options](#options)
 section for more details.
 
 
