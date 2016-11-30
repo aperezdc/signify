@@ -8,7 +8,26 @@ version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
 
 See http://www.tedunangst.com/flak/post/signify for more information.
 
-## Build options
+## License
+
+Like [OpenBSD](http://www.openbsd.org) itself, Signify is distributed under
+the terms of the [BSD license](https://opensource.org/licenses/BSD-3-Clause).
+
+
+## Building
+
+### Dependencies
+
+* GNU Make (any version above 3.70).
+* C compiler. Both GCC and Clang are tested and supported.
+* [libbsd](http://libbsd.freedesktop.org/wiki/) 0.8 or newer.
+
+If your system does not provide a package for `libbsd`, it is possible to
+download and compile it automatically, check the [build options][#options]
+section for more details.
+
+
+### Options
 
 The following options can be passed to Make:
 
