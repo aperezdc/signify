@@ -19,7 +19,6 @@ S := crypto_api.c \
 	 mod_ge25519.c \
 	 fe25519.c \
 	 sc25519.c \
-	 smult_curve25519_ref.c \
 	 bcrypt_pbkdf.c \
 	 timingsafe_bcmp.c \
 	 explicit_bzero.c \

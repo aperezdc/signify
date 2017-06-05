@@ -1,4 +1,4 @@
-/* $OpenBSD: signify.c,v 1.126 2016/10/06 22:38:25 espie Exp $ */
+/* $OpenBSD: signify.c,v 1.127 2017/04/18 02:20:50 deraadt Exp $ */
 /*
  * Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
  *

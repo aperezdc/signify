@@ -2,8 +2,6 @@
 src/include/blf.h
 src/include/sha2.h
 
-src/lib/libc/crypt/arc4random.c
-src/lib/libc/crypt/arc4random.h
 src/lib/libc/crypt/blowfish.c
 src/lib/libc/hash/sha2.c
 src/lib/libc/hash/helper.c
@@ -28,5 +26,4 @@ src/usr.bin/signify/sc25519.h
 src/usr.bin/signify/signify.h
 src/usr.bin/signify/signify.c
 src/usr.bin/signify/signify.1
-src/usr.bin/signify/smult_curve25519_ref.c
 src/usr.bin/signify/zsig.c
