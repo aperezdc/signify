@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v21] - 2017-06-05
+### Changed
+- Unneeded files have been removed from the repository, and from the list of
+  files imported from OpenBSD (in `cvs-files`).
+
 ## [v20] - 2016-11-04
 ### Added
 - New `-z` command line option for signing `gzip` archives.
@@ -22,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v21]: https://github.com/aperezdc/signify/compare/v20...v21
 [v20]: https://github.com/aperezdc/signify/compare/v19...v20
 [v19]: https://github.com/aperezdc/signify/compare/v18...v19
 [v18]: https://github.com/aperezdc/signify/compare/v17...v18
