@@ -7,7 +7,6 @@ src/lib/libc/hash/sha2.c
 src/lib/libc/hash/helper.c
 src/lib/libc/net/base64.c
 src/lib/libc/string/timingsafe_bcmp.c
-src/lib/libc/string/explicit_bzero.c
 
 src/lib/libutil/ohash.h
 src/lib/libutil/ohash.c

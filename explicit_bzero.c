@@ -1,21 +1,41 @@
-
-/*	$OpenBSD: explicit_bzero.c,v 1.4 2015/08/31 02:53:57 guenther Exp $ */
+/* OPENBSD ORIGINAL: lib/libc/string/explicit_bzero.c */
+/*	$OpenBSD: explicit_bzero.c,v 1.1 2014/01/22 21:06:45 tedu Exp $ 
+*/
 /*
  * Public domain.
- * Written by Matthew Dempsky.
+ * Written by Ted Unangst
  */
-
 #include <string.h>
 
-__attribute__((weak)) void
-__explicit_bzero_hook(void *buf, size_t len)
-{
-}
+/*
+ * explicit_bzero - don't let the compiler optimize away bzero
+ */
+
+#ifndef HAVE_EXPLICIT_BZERO
+
+#ifdef HAVE_MEMSET_S
 
 void
-explicit_bzero(void *buf, size_t len)
+explicit_bzero(void *p, size_t n)
 {
-	memset(buf, 0, len);
-	__explicit_bzero_hook(buf, len);
+	(void)memset_s(p, n, 0, n);
 }
-DEF_WEAK(explicit_bzero);
+
+#else /* HAVE_MEMSET_S */
+
+/*
+ * Indirect bzero through a volatile pointer to hopefully avoid
+ * dead-store optimisation eliminating the call.
+ */
+static void *(* volatile ssh_memset)(void *, int, size_t) = memset;
+
+void
+explicit_bzero(void *p, size_t n)
+{
+	ssh_memset(p, 0, n);
+}
+
+#endif /* HAVE_MEMSET_S */
+
+#endif /* HAVE_EXPLICIT_BZERO */
+
