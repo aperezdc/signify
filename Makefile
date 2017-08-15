@@ -1,6 +1,7 @@
 ##################################################################
 # The following variables may be overriden in the command line:  #
 #                                                                #
+BZERO          ?=
 MUSL           ?= 0
 BUNDLED_LIBBSD ?= 0
 PLEDGE         ?= noop
@@ -21,7 +22,6 @@ S := crypto_api.c \
 	 sc25519.c \
 	 bcrypt_pbkdf.c \
 	 timingsafe_bcmp.c \
-	 explicit_bzero.c \
 	 blowfish.c \
 	 base64.c \
 	 sha2.c \
@@ -29,6 +29,19 @@ S := crypto_api.c \
 	 sha512hl.c \
 	 signify.c \
 	 zsig.c
+
+define SED_LAST_LINE
+sed -n -e '/^[a-zA-Z_-]\+$$/p' | sed -n '$$p'
+endef
+
+BZERO := $(strip $(BZERO))
+ifeq ($(BZERO),)
+  BZERO := $(strip $(shell $(CC) -x c -E -P explicit_bzero.h | $(SED_LAST_LINE)))
+endif
+ifeq ($(BZERO),bundled)
+  CPPFLAGS += -DBUNDLED_BZERO=1
+  S += explicit_bzero.c
+endif
 
 PLEDGE := $(strip $(PLEDGE))
 ifneq ($(PLEDGE),)

@@ -99,6 +99,20 @@ The following options can be passed to Make:
     the needed flags for linking its code. For example:
     `make PLEDGE='' EXTRA_LDFLAGS=my-pledge.o`.
 
+* `BZERO=…`
+
+    Choose which implementation of `explicit_bzero()` to use. Supported values
+    are:
+
+    - `libc`: Relies on the system C library providing the function definition
+      in the `<string.h>` header.
+    - `bundled`: Use the portable implementation included with Signify's source
+      code in `explicit_bzero.c`.
+
+    The build system will try to detect whether the C library includes the
+    function, and in most cases it will *not* be needed to specify this option.
+    Providing a value for `BZERO` disables the automatic detection.
+
 * `EXTRA_CFLAGS=…`, `EXTRA_LDFLAGS=…`
 
     Additional flags to be passed to the compiler and the linker,
