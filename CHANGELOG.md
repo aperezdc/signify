@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v22] - 2018-08-15
+### Added
+- For systems using GNU libc 2.25 or newer, the version of `explicit_bzero()`
+  supplied by the C library is used by default instead of the bundled one.
+
+### Fixed
+- The bundled implementation of `explicit_bzero()` was changed, the old one
+  was likely to be inlined by the compiler.
+
 ## [v21] - 2017-06-05
 ### Changed
 - Unneeded files have been removed from the repository, and from the list of
@@ -27,6 +36,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v22]: https://github.com/aperezdc/signify/compare/v21...v22
 [v21]: https://github.com/aperezdc/signify/compare/v20...v21
 [v20]: https://github.com/aperezdc/signify/compare/v19...v20
 [v19]: https://github.com/aperezdc/signify/compare/v18...v19
