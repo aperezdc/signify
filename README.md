@@ -116,7 +116,7 @@ The following options can be passed to Make:
 * `EXTRA_CFLAGS=…`, `EXTRA_LDFLAGS=…`
 
     Additional flags to be passed to the compiler and the linker,
-    repectively.
+    respectively.
 
 For example, you can build a size-optimized version with:
 
