@@ -87,8 +87,8 @@ The following options can be passed to Make:
 * `PLEDGE=…`
 
     Choose among one of the alternative implementations of the
-    [pledge()](https://man.openbsd.org/pledge.2)
-    system call. For the moment the only supported values is:
+    [pledge(2)](https://man.openbsd.org/pledge.2)
+    system call. For the moment the only supported values are:
 
       - `noop` *(default)*: Uses an implementation which does nothing
       - `waive` *(Linux-only)*: Uses
@@ -101,8 +101,9 @@ The following options can be passed to Make:
 
 * `BZERO=…`
 
-    Choose which implementation of `explicit_bzero()` to use. Supported values
-    are:
+    Choose which implementation of
+    [`explicit_bzero(3)`](https://man.openbsd.org/bzero.3)
+    to use. Supported values are:
 
     - `libc`: Relies on the system C library providing the function definition
       in the `<string.h>` header.
