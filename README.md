@@ -49,7 +49,7 @@ The following options can be passed to Make:
     installed in the system is an unsupported version, or when installing it
     in the system is not desirable.
 
-    Enabling this options needs `wget`, `xz`, `tar`, and `gpg` installed in
+    Enabling this option requires `wget`, `xz`, `tar`, and `gpg` installed on
     the build system. To avoid downloading files while building, there are
     two options:
 
