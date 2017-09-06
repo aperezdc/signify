@@ -6,11 +6,11 @@ OpenBSD tool to sign and verify signatures on files. This is a portable
 version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
 0.7 or newer is required).
 
-See http://www.tedunangst.com/flak/post/signify for more information.
+See https://www.tedunangst.com/flak/post/signify for more information.
 
 ## License
 
-Like [OpenBSD](http://www.openbsd.org) itself, Signify is distributed under
+Like [OpenBSD](https://www.openbsd.org) itself, Signify is distributed under
 the terms of the [BSD license](https://opensource.org/licenses/BSD-3-Clause).
 
 
@@ -87,7 +87,7 @@ The following options can be passed to Make:
 * `PLEDGE=…`
 
     Choose among one of the alternative implementations of the
-    [pledge()](http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man2/pledge.2)
+    [pledge()](https://man.openbsd.org/pledge.2)
     system call. For the moment the only supported values is:
 
       - `noop` *(default)*: Uses an implementation which does nothing
