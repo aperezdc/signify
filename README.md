@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/aperezdc/signify.svg?branch=master)](https://travis-ci.org/aperezdc/signify)
 
-OpenBSD tool to signs and verify signatures on files. This is a portable
+OpenBSD tool to sign and verify signatures on files. This is a portable
 version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
 0.7 or newer is required).
 
