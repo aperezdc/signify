@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [v22] - 2018-08-15
+## [v22] - 2017-08-15
 ### Added
 - For systems using GNU libc 2.25 or newer, the version of `explicit_bzero()`
   supplied by the C library is used by default instead of the bundled one.
