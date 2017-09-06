@@ -53,10 +53,10 @@ The following options can be passed to Make:
     the build system. To avoid downloading files while building, there are
     two options:
 
-      - `make BUNDLED_LIBBSD=1 libbsd-print-urls` will print the URLs
-        of the files which need to be downloaded, one per line.
-      - `make BUNDLED_LIBBSD=1 libbsd-download` will download the needed
-        files.
+    - `make BUNDLED_LIBBSD=1 libbsd-print-urls` will print the URLs
+      of the files which need to be downloaded, one per line.
+    - `make BUNDLED_LIBBSD=1 libbsd-download` will download the needed
+      files.
 
     Pre-downloading the files will avoid hitting the network during build, but
     will still check the PGP signature of the `libbsd` tarball.
@@ -90,10 +90,10 @@ The following options can be passed to Make:
     [pledge(2)](https://man.openbsd.org/pledge.2)
     system call. For the moment the only supported values are:
 
-      - `noop` *(default)*: Uses an implementation which does nothing
-      - `waive` *(Linux-only)*: Uses
-        [libwaive](https://github.com/dimkr/libwaive), which itself uses
-        [seccomp filters](https://en.wikipedia.org/wiki/Seccomp).
+    - `noop` *(default)*: Uses an implementation which does nothing
+    - `waive` *(Linux-only)*: Uses
+      [libwaive](https://github.com/dimkr/libwaive), which itself uses
+      [seccomp filters](https://en.wikipedia.org/wiki/Seccomp).
 
     To use your own implementation, use an empty value, and pass
     the needed flags for linking its code. For example:
