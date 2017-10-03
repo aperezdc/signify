@@ -14,6 +14,16 @@ Like [OpenBSD](https://www.openbsd.org) itself, Signify is distributed under
 the terms of the [BSD license](https://opensource.org/licenses/BSD-3-Clause).
 
 
+## Installation
+
+Some GNU/Linux distributions have readily available packages in their
+repositories. It is recommended to use these, unless you absolutely need to
+build from source code:
+
+-   Debian: `apt install signify-openbsd`
+-   Arch Linux: `pacman -S signify`
+
+
 ## Building
 
 ### Dependencies
