@@ -10,8 +10,8 @@ See https://www.tedunangst.com/flak/post/signify for more information.
 
 ## License
 
-Like [OpenBSD](https://www.openbsd.org) itself, Signify is distributed under
-the terms of the [BSD license](https://opensource.org/licenses/BSD-3-Clause).
+Signify is distributed under the terms of the [ISC
+license](https://opensource.org/licenses/isc-license.txt).
 
 
 ## Installation
