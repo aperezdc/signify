@@ -54,10 +54,10 @@ The following options can be passed to Make:
 
 * `BUNDLED_LIBBSD=1`
 
-    Downloads and builds [libbsd](http://libbsd.freedesktop.org/wiki/),
-    and links it statically into Signify. This can be used when the version
-    installed in the system is an unsupported version, or when installing it
-    in the system is not desirable.
+    Downloads, builds [libbsd](http://libbsd.freedesktop.org/wiki/), and links
+    it statically into Signify. This can be used when the version installed in
+    the system is an unsupported version, or when installing it in the system
+    is not desirable.
 
     Enabling this option requires `wget`, `xz`, `tar`, and `gpg` installed on
     the build system. To avoid downloading files while building, there are
