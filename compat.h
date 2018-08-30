@@ -25,19 +25,9 @@
 #define __dead
 #endif /* !__dead */
 
-#define DEF_WEAK(a)
-#define MAKE_CLONE(a, b)
-
-#define SHA224Transform     SHA256Transform
-#define SHA224Update        SHA256Update
-#define SHA224Pad           SHA256Pad
-#define SHA384Transform     SHA512Transform
-#define SHA384Update        SHA512Update
-#define SHA384Pad           SHA512Pad
-#define SHA512_256Transform SHA512Transform
-#define SHA512_256Update    SHA512Update
-#define SHA512_256Pad       SHA512Pad
-#define SHA512_256Data      SHA512Data
+#define DEF_WEAK(x)
+#define MAKE_CLONE(dst, src)	typeof(dst) dst \
+				__attribute__((alias (#src)))
 
 #include <stdint.h>
 #include <stddef.h>

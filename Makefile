@@ -27,6 +27,7 @@ S := crypto_api.c \
 	 sha2.c \
 	 sha256hl.c \
 	 sha512hl.c \
+	 sha512_256hl.c \
 	 signify.c \
 	 zsig.c
 
@@ -196,7 +197,7 @@ signify: $O $(LIBBSD_DEPS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBBSD_LDFLAGS) $(LDLIBS)
 
 clean-signify:
-	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c
+	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c sha512_256hl.c
 
 clean: clean-signify
 .PHONY: clean-signify
@@ -213,6 +214,11 @@ sha512hl.c: helper.c
 	sed -e 's/hashinc/sha2.h/g' \
 	    -e 's/HASH/SHA512/g' \
 	    -e 's/SHA[0-9][0-9][0-9]_CTX/SHA2_CTX/g' $< > $@
+
+sha512_256hl.c:	helper.c
+	sed -e 's/hashinc/sha2.h/g' \
+	    -e 's/HASH/SHA512_256/g' \
+	    -e 's/SHA512_256_CTX/SHA2_CTX/g' $< > $@
 
 install: signify signify.1.gz
 	install -m 755 -d $(DESTDIR)$(PREFIX)/bin
