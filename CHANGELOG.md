@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v24] - 2018-09-03
+### Fixed
+- Fixed memory corruption due to incorrect remapping of SHA-224, SHA-384,
+  and SHA-512-256 to incompatible counterparts in `compat.h`. Thanks to
+  Ori Bernstein for the bug report (#17) and Wolfgang Müller for submitting
+  the fix (#18).
+
+## Changed
+- Bumped version of libbsd to 0.9.1 for bundling, which does not need
+  patching to work with Musl.
+
 ## [v23] - 2017-11-20
 ### Fixed
 - Fixed handling of the `errno` variable.
@@ -40,6 +51,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v24]: https://github.com/aperezdc/signify/compare/v23...v24
 [v23]: https://github.com/aperezdc/signify/compare/v22...v23
 [v22]: https://github.com/aperezdc/signify/compare/v21...v22
 [v21]: https://github.com/aperezdc/signify/compare/v20...v21
