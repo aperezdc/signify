@@ -4,5 +4,5 @@ compiler:
   - clang
   - gcc
 script:
-  - gpg --keyserver hkp://pgp.mit.edu --recv-keys A4AE57A3
+  - gpg --keyserver hkp://pgp.key-server.io:11371/ --recv-keys A4AE57A3
   - make BUNDLED_LIBBSD=1 LDLIBS='-lrt' WGET='wget --no-check-certificate'
