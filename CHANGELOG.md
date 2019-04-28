@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v25] - 2019-04-28
+### Added
+- Updated to the latest upstream sources, the `-z` command line flag can
+  now be used to zero the timestamp when producing a signature.
+
 ## [v24] - 2018-09-03
 ### Fixed
 - Fixed memory corruption due to incorrect remapping of SHA-224, SHA-384,
@@ -51,6 +56,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v25]: https://github.com/aperezdc/signify/compare/v24...v25
 [v24]: https://github.com/aperezdc/signify/compare/v23...v24
 [v23]: https://github.com/aperezdc/signify/compare/v22...v23
 [v22]: https://github.com/aperezdc/signify/compare/v21...v22
