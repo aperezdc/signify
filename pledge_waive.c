@@ -66,7 +66,7 @@ find_flag (const char *pledge_name, size_t len)
 
 
 int
-pledge (const char *promises, const char *paths[])
+pledge (const char *promises, const char *execpromises)
 {
     int flags = WAIVE_INET | WAIVE_UN | WAIVE_PACKET | WAIVE_MOUNT |
         WAIVE_OPEN | WAIVE_EXEC | WAIVE_CLONE | WAIVE_KILL |
@@ -74,6 +74,8 @@ pledge (const char *promises, const char *paths[])
 
     size_t s = 0;
     size_t e = 0;
+
+    (void) execpromises;
 
     for (;;) {
         while (promises[e] != '\0' && !isspace (promises[e]))
