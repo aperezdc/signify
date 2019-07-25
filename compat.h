@@ -26,7 +26,11 @@
 #endif /* !COMPAT_BOUNDS_CHECKING */
 
 #ifndef __dead
+#if defined(__GNUC__) && (__GNUC__ > 3)
+#define __dead __attribute__((noreturn))
+#else
 #define __dead
+#endif
 #endif /* !__dead */
 
 #define DEF_WEAK(x)
