@@ -17,6 +17,10 @@
 #ifndef COMPAT_H
 #define COMPAT_H
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif /* !_GNU_SOURCE */
+
 #ifndef COMPAT_BOUNDS_CHECKING
 #define __bounded__(a, b, c)
 #endif /* !COMPAT_BOUNDS_CHECKING */
