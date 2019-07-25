@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v26] - 2019-07-25
+### Added
+- Provide a definition for the `__dead` marker when using GCC 4+ or Clang.
+
+### Fixed
+- Adapted to the new `pledge()` definition in OpenBSD 6.3 and newer.
+- Ensure that the prototype for `asprintf()` gets defined by system headers.
+
+### Changed
+- Silence (harmless) compiler warnings enabled in more recent GCC/Clang
+  releases when using `-Wall`.
+
 ## [v25] - 2019-04-28
 ### Added
 - Updated to the latest upstream sources, the `-z` command line flag can
@@ -56,6 +68,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v26]: https://github.com/aperezdc/signify/compare/v25...v26
 [v25]: https://github.com/aperezdc/signify/compare/v24...v25
 [v24]: https://github.com/aperezdc/signify/compare/v23...v24
 [v23]: https://github.com/aperezdc/signify/compare/v22...v23
