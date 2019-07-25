@@ -192,9 +192,11 @@ endif
 O := $(patsubst %.c,%.o,$S)
 
 
-signify: CFLAGS += $(LIBBSD_CFLAGS) -Wall
+signify: override CFLAGS += $(LIBBSD_CFLAGS) -Wall
 signify: $O $(LIBBSD_DEPS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBBSD_LDFLAGS) $(LDLIBS)
+
+zsig.o signify.o bcrypt_pbkdf.o: override CFLAGS += -Wno-pointer-sign
 
 clean-signify:
 	$(RM) $O signify signify.1.gz sha256hl.c sha512hl.c sha512_256hl.c
