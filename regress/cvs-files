@@ -1,0 +1,7 @@
+src/regress/usr.bin/signify/forgery.txt
+src/regress/usr.bin/signify/forgery.txt.sig
+src/regress/usr.bin/signify/orders.txt
+src/regress/usr.bin/signify/orders.txt.sig
+src/regress/usr.bin/signify/regresskey.pub
+src/regress/usr.bin/signify/regresskey.sec
+src/regress/usr.bin/signify/signify.sh

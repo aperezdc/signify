@@ -237,3 +237,8 @@ dist:
 	git archive --prefix=signify-$V/ $T | xz -9c > signify-$V.tar.xz
 
 .PHONY: dist
+
+check: signify
+	@sh regress/run
+
+.PHONY: check

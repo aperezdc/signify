@@ -1,0 +1,65 @@
+#! /bin/sh
+#
+# Simple test harness for OpenBSD's Signify tests.
+# Copyright (C) 2019 Adrian Perez de Castro <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+
+_th__dir_path=$(dirname "$0")
+
+_th__sha256_program=$(command -v sha256)
+if ! [ -x "$_th__sha256_program" ] ; then
+	# Try to use GNU coreutils' sha256sum as fallback.
+	_th__sha256_program=$(command -v sha256sum)
+	if ! [ -x "$_th__sha256_program" ] ; then
+		echo 'Cannot find sha256/sha256sum' 1>&2
+		exit 1
+	fi
+	if "$_th__sha256_program" --version 2> /dev/null | grep -q coreutils ; then
+		sha256 () {
+			"$_th__sha256_program" --tag "$@"
+		}
+	else
+		echo 'The sha256sum program is not the GNU coreutils version' 1>&2
+		exit 1
+	fi
+fi
+
+_th__sha512_program=$(command -v sha512)
+if ! [ -x "$_th__sha512_program" ] ; then
+	# Ditto, try for sha512sum.
+	_th__sha512_program=$(command -v sha512sum)
+	if ! [ -x "$_th__sha512_program" ] ; then
+		echo 'Cannot find sha512/sha512sum' 1>&2
+		exit 1
+	fi
+	if "$_th__sha512_program" --version 2> /dev/null | grep -q coreutils ; then
+		sha512 () {
+			"$_th__sha512_program" --tag "$@"
+		}
+	else
+		echo 'The sha512sum program is not the GNU coreutils version' 1>&2
+		exit 1
+	fi
+fi
+
+# Point to the locally-built signify program
+signify () {
+	echo " - signify $* ..." > /dev/tty
+	"../../signify" "$@"
+}
+
+# Harness configured. Go!
+echo 'Running tests:'
+cd "$_th__dir_path" || exit 2
+set -- "$(pwd)"
+test -d out || mkdir out
+cd out || exit 3
+. ../signify.sh ; rc=$?
+if [ $rc -eq 0 ] ; then
+	echo 'Tests passed.'
+else
+	echo 'Tests failed.'
+fi
+exit $rc
