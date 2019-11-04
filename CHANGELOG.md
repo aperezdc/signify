@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v27] - 2019-11-04
+### Fixed
+- Updated to the latest upstream sources, the size of a fixed buffer has
+  been changed to use `PATH_MAX` instead to avoid potential overflows when
+  using very long path names.
+
 ## [v26] - 2019-07-25
 ### Added
 - Provide a definition for the `__dead` marker when using GCC 4+ or Clang.
@@ -68,6 +74,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v27]: https://github.com/aperezdc/signify/compare/v26...v27
 [v26]: https://github.com/aperezdc/signify/compare/v25...v26
 [v25]: https://github.com/aperezdc/signify/compare/v24...v25
 [v24]: https://github.com/aperezdc/signify/compare/v23...v24
@@ -77,4 +84,3 @@ All notable changes to this project will be documented in this file.
 [v20]: https://github.com/aperezdc/signify/compare/v19...v20
 [v19]: https://github.com/aperezdc/signify/compare/v18...v19
 [v18]: https://github.com/aperezdc/signify/compare/v17...v18
-
