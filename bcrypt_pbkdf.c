@@ -1,4 +1,4 @@
-/* $OpenBSD: bcrypt_pbkdf.c,v 1.13 2015/01/12 03:20:04 tedu Exp $ */
+/* $OpenBSD: bcrypt_pbkdf.c,v 1.15 2019/11/21 16:13:39 tedu Exp $ */
 /*
  * Copyright (c) 2013 Ted Unangst <tedu@openbsd.org>
  *
@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "crypto_api.h"
 #include "blf.h"
 #include "sha2.h"
 #include <string.h>
@@ -110,10 +111,10 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 
 	/* nothing crazy */
 	if (rounds < 1)
-		return -1;
+		goto bad;
 	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
 	    keylen > sizeof(out) * sizeof(out))
-		return -1;
+		goto bad;
 	stride = (keylen + sizeof(out) - 1) / sizeof(out);
 	amt = (keylen + stride - 1) / stride;
 
@@ -164,6 +165,12 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	/* zap */
 	explicit_bzero(&ctx, sizeof(ctx));
 	explicit_bzero(out, sizeof(out));
+	explicit_bzero(tmpout, sizeof(tmpout));
 
 	return 0;
+
+bad:
+	/* overwrite with random in case caller doesn't check return code */
+	arc4random_buf(key, keylen);
+	return -1;
 }
