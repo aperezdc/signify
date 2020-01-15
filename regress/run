@@ -46,7 +46,7 @@ fi
 
 # Point to the locally-built signify program
 signify () {
-	echo " - signify $* ..." > /dev/tty
+	echo " - signify $* ..." 1>&2
 	"../../signify" "$@"
 }
 
