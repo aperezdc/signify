@@ -1,8 +1,0 @@
-dist: xenial
-language: c
-compiler:
-  - clang
-  - gcc
-script:
-  - gpg --keyserver hkps://keys.openpgp.org --recv-keys 4F3E74F436050C10F5696574B972BF3EA4AE57A3
-  - make BUNDLED_LIBBSD=1 LDLIBS='-lrt' WGET='wget --no-check-certificate'
