@@ -1,0 +1,16 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: setup-gpg
+      run: gpg --keyserver hkps://keys.openpgp.org --recv-keys 4F3E74F436050C10F5696574B972BF3EA4AE57A3
+    - name: make
+      run: make BUNDLED_LIBBSD=1
+    - name: make check
+      run: make BUNDLED_LIBBSD=1 check
