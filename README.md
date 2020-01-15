@@ -1,6 +1,6 @@
 # Signify - Sign and Verify
 
-[![Build Status](https://travis-ci.org/aperezdc/signify.svg?branch=master)](https://travis-ci.org/aperezdc/signify)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Faperezdc%2Fsignify%2Fbadge&style=flat)](https://actions-badge.atrox.dev/aperezdc/signify/goto)
 
 OpenBSD tool to sign and verify signatures on files. This is a portable
 version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
