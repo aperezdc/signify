@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v28] - 2020-02-06
+### Added
+- In verification mode (with `-C`) it is now possible to use the `-t` command
+  line flag to specify the key type.
+- A copy of the regression tests from the OpenBSD CVS repository is now
+  included.
+
+### Changed
+- Bumped version of libbsd to 0.10.0, which is the most recent stable.
+
+### Fixed
+- Ensure that release packages include the code for the `libwaive/` submodule.
+
 ## [v27] - 2019-11-04
 ### Fixed
 - Updated to the latest upstream sources, the size of a fixed buffer has
@@ -74,6 +87,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v28]: https://github.com/aperezdc/signify/compare/v27...v28
 [v27]: https://github.com/aperezdc/signify/compare/v26...v27
 [v26]: https://github.com/aperezdc/signify/compare/v25...v26
 [v25]: https://github.com/aperezdc/signify/compare/v24...v25
