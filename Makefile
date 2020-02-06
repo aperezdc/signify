@@ -234,7 +234,8 @@ GIT_TAG  = $(shell git describe --tags HEAD)
 dist: T := $(GIT_TAG)
 dist: V := $(patsubst v%,%,$T)
 dist:
-	git archive --prefix=signify-$V/ $T | xz -9c > signify-$V.tar.xz
+	git archive-all --force-submodules --prefix=signify-$V/ signify-$V.tar
+	xz -f9 signify-$V.tar
 
 .PHONY: dist
 
