@@ -162,9 +162,11 @@ CFLAGS  += $(SECCOMP_CFLAGS) -pthread
 LDFLAGS += $(SECCOMP_LIBS) -pthread
 S       += libwaive/waive.c
 
+ifneq ($(wildcard .gitmodules),)
 libwaive/waive.c: .gitmodules
 	git submodule init && git submodule update libwaive
 	touch $@
+endif
 endif
 
 ifeq ($(strip $(VERIFY_ONLY)),)
@@ -230,6 +232,7 @@ install: signify signify.1.gz
 
 .PHONY: install
 
+ifneq ($(wildcard .git/),)
 GIT_TAG  = $(shell git describe --tags HEAD)
 dist: T := $(GIT_TAG)
 dist: V := $(patsubst v%,%,$T)
@@ -238,6 +241,7 @@ dist:
 	xz -f9 signify-$V.tar
 
 .PHONY: dist
+endif
 
 check: signify
 	@sh regress/run
