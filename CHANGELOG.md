@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v29] - 2020-03-07
+### Added
+- Source packages now include a license. Thanks to Marcus Müller for the
+  patch (#24).
+- New convenience targets for static builds (`make static` &
+  `make static-musl`). Thanks to @frink for the bug report.
+
+### Fixed
+- Static builds should work again. Thanks to @frink for the bug report.
+
 ## [v28] - 2020-02-06
 ### Added
 - In verification mode (with `-C`) it is now possible to use the `-t` command
@@ -87,6 +97,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v29]: https://github.com/aperezdc/signify/compare/v28...v29
 [v28]: https://github.com/aperezdc/signify/compare/v27...v28
 [v27]: https://github.com/aperezdc/signify/compare/v26...v27
 [v26]: https://github.com/aperezdc/signify/compare/v25...v26
