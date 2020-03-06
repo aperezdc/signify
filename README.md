@@ -134,6 +134,18 @@ For example, you can build a size-optimized version with:
     make EXTRA_CFLAGS='-Os -s' LTO=1
 
 
+### Convenience Targets
+
+The following Make targets are provided as convenience for building static
+`signify` binaries:
+
+* `make static`: Build a static binary bundling `libbsd` and using the system
+  default C library.
+* `make static-musl`: Build a static binary bundling `libbsd` using the Musl
+  C library. This will set `musl-gcc` both as the compiler and linker to use
+  and may not work on systems where this wrapper scripts is not available.
+
+
 ## Troubleshooting
 
 * **Problem:** Undefined references to `clock_gettime`. <br>
