@@ -37,6 +37,11 @@
 #define MAKE_CLONE(dst, src)	typeof(dst) dst \
 				__attribute__((alias (#src)))
 
+#define u_int8_t uint8_t
+#define u_int16_t uint16_t
+#define u_int32_t uint32_t
+#define u_int64_t uint64_t
+
 #include <stdint.h>
 #include <stddef.h>
 
