@@ -1,0 +1,33 @@
+# build.earth
+FROM debian:stable
+
+# install dependencies
+RUN apt-get -y update
+RUN apt-get -y install build-essential file make gcc git pkg-config wget
+
+# Fetch the public key for the libbsd release
+RUN mkdir -m 700 -p /root/keys /root/.gnupg
+RUN wget https://www.hadrons.org/~guillem/guillem-4F3E74F436050C10F5696574B972BF3EA4AE57A3.asc -O /root/keys/libbsd.asc
+
+WORKDIR /code
+
+code:
+  COPY --dir . /code
+
+  # Download the bundled libbsd
+  RUN make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget
+  SAVE IMAGE
+
+build:
+  FROM +code
+
+  # Fake the download step from Makefile
+  RUN touch libbsd-0.10.0.tar.xz libbsd-0.10.0.tar.xz.asc
+
+  # The build requires a GPG verify, so import the key
+  RUN gpg --import /root/keys/libbsd.asc
+  RUN make BUNDLED_LIBBSD=1 static
+
+  # Save the static binary and the man page
+  SAVE ARTIFACT signify AS LOCAL signify
+  SAVE ARTIFACT signify.1 AS LOCAL signify.1
