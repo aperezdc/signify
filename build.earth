@@ -2,10 +2,10 @@
 FROM debian:stable
 
 # install build dependencies, then clean up system packages
-RUN apt-get -y update
-RUN apt-get -y install build-essential file make gcc git pkg-config wget
-RUN apt-get -y --purge autoremove
-RUN apt-get -y clean 
+RUN apt-get -y update && \
+    apt-get -y install build-essential file make gcc git pkg-config wget && \
+    apt-get -y --purge autoremove && \
+    apt-get -y clean 
 
 # Fetch the public key for the libbsd release.  This will be needed in
 # the build step.
