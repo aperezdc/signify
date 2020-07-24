@@ -14,21 +14,37 @@ RUN wget https://www.hadrons.org/~guillem/guillem-4F3E74F436050C10F5696574B972BF
 
 WORKDIR /code
 
-code:
-  COPY --dir . /code
 
-  # Download the bundled libbsd.  The Makefile includes a
-  # "libbsd-print-urls" target that prints out the URLs of the libbsd
-  # needed to work with this version of signify.  So we use the
-  # Makefile from the copy of signify that we're building to get the
-  # correct libbsd.
-  RUN make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget --mirror
+bundle:
+  # Download the bundled libbsd.  This should only have to be run if the
+  # Makefile changes.
+  RUN mkdir /bundle
+  COPY Makefile /bundle
+
+  # The Makefile includes a "libbsd-print-urls" target that prints the 
+  # URLs of the libbsd files needed to work with this version of signify.
+  # (We can't use the libbsd-download target here, because it runs GPG,
+  # and GPG leaves a socket behind that can't be included in the image.)
+  RUN (cd /bundle && make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget)
+  RUN rm /bundle/Makefile
+
+  # Now all that is left in /bundle is copies of the files listed by
+  # libbsd-print-urls.
   SAVE IMAGE
+
+
+code:
+  # Copy everything, then copy the libbsd files in.
+  FROM +bundle
+  COPY --dir . /code
+  RUN cp /bundle/* /code
+  SAVE IMAGE
+
 
 build:
   FROM +code
 
-  # The modification data on the libbsd source and signature needs to be
+  # The modification date on the libbsd source and signature needs to be
   # new enough for the build not to try downloading it again.
   RUN find . -maxdepth 1 -name 'libbsd*' -exec touch '{}' ';' 
 
