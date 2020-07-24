@@ -1,11 +1,14 @@
 # build.earth
 FROM debian:stable
 
-# install dependencies
+# install build dependencies, then clean up system packages
 RUN apt-get -y update
 RUN apt-get -y install build-essential file make gcc git pkg-config wget
+RUN apt-get -y --purge autoremove
+RUN apt-get -y clean 
 
-# Fetch the public key for the libbsd release
+# Fetch the public key for the libbsd release.  This will be needed in
+# the build step.
 RUN mkdir -m 700 -p /root/keys /root/.gnupg
 RUN wget https://www.hadrons.org/~guillem/guillem-4F3E74F436050C10F5696574B972BF3EA4AE57A3.asc -O /root/keys/libbsd.asc
 
@@ -14,18 +17,25 @@ WORKDIR /code
 code:
   COPY --dir . /code
 
-  # Download the bundled libbsd
-  RUN make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget
+  # Download the bundled libbsd.  The Makefile includes a
+  # "libbsd-print-urls" target that prints out the URLs of the libbsd
+  # needed to work with this version of signify.  So we use the
+  # Makefile from the copy of signify that we're building to get the
+  # correct libbsd.
+  RUN make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget --mirror
   SAVE IMAGE
 
 build:
   FROM +code
 
-  # Fake the download step from Makefile
-  RUN touch libbsd-0.10.0.tar.xz libbsd-0.10.0.tar.xz.asc
+  # The modification data on the libbsd source and signature needs to be
+  # new enough for the build not to try downloading it again.
+  RUN find . -maxdepth 1 -name 'libbsd*' -exec touch '{}' ';' 
 
   # The build requires a GPG verify, so import the key
   RUN gpg --import /root/keys/libbsd.asc
+
+  # This make does not work with -j 
   RUN make BUNDLED_LIBBSD=1 static
 
   # Save the static binary and the man page
