@@ -56,4 +56,4 @@ build:
 
   # Save the static binary and the man page
   SAVE ARTIFACT signify AS LOCAL signify
-  SAVE ARTIFACT signify.1 AS LOCAL signify.1
+  SAVE ARTIFACT signify.1.gz AS LOCAL signify.1.gz
