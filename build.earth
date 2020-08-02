@@ -23,8 +23,6 @@ bundle:
 
   # The Makefile includes a "libbsd-print-urls" target that prints the 
   # URLs of the libbsd files needed to work with this version of signify.
-  # (We can't use the libbsd-download target here, because it runs GPG,
-  # and GPG leaves a socket behind that can't be included in the image.)
   RUN (cd /bundle && make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget)
   RUN rm /bundle/Makefile
 
@@ -53,6 +51,11 @@ build:
 
   # This make does not work with -j 
   RUN make BUNDLED_LIBBSD=1 static
+
+  # Run the regression tests. (Even though signify is already built with
+  # bundled libbsd, we need to use BUNDLED_LIBBSD to keep from checking
+  # for a system installed copy.)
+  RUN make BUNDLED_LIBBSD=1 check
 
   # Save the static binary and the man page
   SAVE ARTIFACT signify AS LOCAL signify
