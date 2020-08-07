@@ -42,6 +42,8 @@ code:
 build:
   FROM +code
 
+  RUN date
+
   # The modification date on the libbsd source and signature needs to be
   # new enough for the build not to try downloading it again.
   RUN find . -maxdepth 1 -name 'libbsd*' -exec touch '{}' ';' 

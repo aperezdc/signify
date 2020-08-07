@@ -7,12 +7,14 @@ layout: document.html
 
 Spring cleaning for builds
 
+Every time I build an open source project from scratch, I end up installing a bunch of dependencies.
+Surprisingly often, this works out fine. But often it's tricky to get the build working the same 
+way on multiple systems.
 
+Containerize it right?  
 
-
-One use case for a container build is web software.
-
-I want an accurate copy of the production environment inside a container, but I still want to be able to edit files
+I want an accurate copy of the production environment inside a container, but I still want to be able to edit files and
+use my web framework's auto-reload feature.
 
 In this case I want something like the 
 
@@ -24,79 +26,68 @@ files, CSS, and graphics) is in a volume shared with
 the container.  This way I can do a 
 <code>[flask run](https://flask.palletsprojects.com/en/master/server/)</code>
 
-inside the container, and when I edit a file in the volume, it Just Works and auto-reloads.
+inside the container, and when I edit a file in the volume, it Just Works and auto-reloads.  Pinfactory is easy to
+work on in containers. You can run one script to do all the unit tests in a container, one script to start up a web
+server with real data, and there's even a tricked-out script that creates a container with multiple users.
 
-
-But sometimes I 
-
-
-Building one project from source isn't hard, but I have found that I often get a big stack of
-dependencies and configuration changes that are hard to repeat.
-
-
-Containers are a big win for local development and testing on even simple web software.
-
-Here's a simple [Dockerfile for a Jekyll project](https://github.com/dmarti/smmd/blob/gh-pages/Dockerfile) that I can use to preview
-
-(I now have a personal RPM that conflicts out all the Ruby packages, so that I know I
-
-<span class="aside">Memo to self: when they add time travel to Git, send that Dockerfile back in time to when I trying to maintain a company web
+And here's a simple [Dockerfile for a Jekyll project](https://github.com/dmarti/smmd/blob/gh-pages/Dockerfile) that I can use to preview a big Jekyll site locally, without installing any Ruby packages.  This way of running Jekyll worked well enough that 
+I now have a personal RPM that conflicts out all the Ruby packages, so that I know I am doing everything reproducibly in a container. <span class="aside">Memo to self: when they add a time travel feature to Git, send that Dockerfile back in time to when I trying to maintain a company web
 site on Jekyll and it never came out quite the same on everyone's machine.</span>
 
-
-So now I'm taking the container idea that works so well for web 
-
-
-
-
+Containers for developing and testing web sites have solved so many problems for me that I'm now
+taking the container idea that works so
+well for working on a web site and applying it to
+conventional software builds.
 
 
-Background
+## Building a simple tool to sign files
 
 I run my own mail server and other services. (My blog is on a VPS with a static site generator.) 
-
 That means tracking and deploying a bunch of files that end up in a bunch of different places.
 
-I want to be able to check them
+I want to be able to sign them and check signatures.  If you have a bunch of stuff deployed it's nice to be able to verify files.
+But setting up Gnu Privacy Guard on all those systems is kind of a pain.  What I really need is a lighter-weight signature tool, that I can use to sign and check my config files.
 
-The mail server has config files for SpamAssassin, Postfix, and Dovecot, along with 
-
-If you have a bunch of stuff deployed it's nice to be able to check signatures on files
-
-But setting up Gnu Privacy Guard on all those systems is kind of a pain.
-
-What I really need is a lighter-weight signature tool, that I can use to sign and check my config files.
-
-Looking around, I found 
+Looking around, I found [signify, the OpenBSD tool to signs and verify signatures on files, in a portable version.](https://github.com/aperezdc/signify).
 
 
+Looks like just what I need.  Sign stuff, be able to check the integrity of files on a remote system, not a lot to configure, easy to script.
 
-Signify
-
-Looks like what I need.  Sign stuff, be able to check the integrity of files on a remote system
-
-
-But I need to be able to build and run the same signify on my VPSs (mostly Debian) and on my client systems (mostly Fedora)
+Also, a good test for a new way to make a software build easy to manage and repeatable.
 
 
+Fortunately, Signify has a very nice build that facilitates what I want to do.  
+I can build a statically linked signify, and the man page, that will work on all my Linux systems of whatever distribution.  No
+dependency on the system version of the libraries
 
-The Signify build
-
-Fortunately, Signify has a very nice build that facilitates what I want to do
-
-
-I can build a statically linked signify, and the man page, and install them everywhere.
+Signify is also a good example of a program to build and install, because it includes an interesting dependency and a step where the Makefile
+checks the OpenPGP signature of the dependency.  So it's a good opportunity for Earthly practice.
 
 
 
 ## About Earthly
 
+Earthly is a tool for 
+
+It uses the Docker daemon to manage containers.
+
+I have run it with both `docker-ce` and with the Fedora 32 Docker setup.
+
+Target: this is like a target in a Makefile, except that the result is an entire container image, including all side effects.
+If anything in your build leaves stray files behind in /tmp or the user's home directory, they will be peristed.
+
+Recipe: the steps needed to build a target
+
+More info: [Earthfile reference](https://docs.earthly.dev/earthfile) 
+
+
+
+## Planning a Signify build.
 
 The build process looks roughly like this.
 
-
-Get the base system including any native packages needed for the build.
-
+First, I'll get the base system including any native packages needed for the build.  I'll use
+`debian-stable` as a base, because I know it and it has reasonable versions of what I need.
 
 Then get the specific dependency specified by the signify Makefile -- the right version of
 libbsd.  Save that.
@@ -108,12 +99,7 @@ Finally, copy in my version of the code, run make, and save the artifacts I want
 Seems pretty simple.
 
 
-Target: this is like a target in a Makefile, except that the result is an entire container image, including all side effects.
-If anything in your build leaves stray files behind in /tmp or the user's home directory, they will be peristed.
 
-Recipe: the steps needed to build a target
-
-More info: [Earthfile reference](https://docs.earthly.dev/earthfile) 
 
 
 ## The build already does what I want
@@ -126,7 +112,7 @@ linked singify binary.  All I have to do is...
 That's great.  Let's make it work with the build plan.
 
 
-## Try it 
+## First try
 
 First whack at getting the dependencies
 
