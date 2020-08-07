@@ -52,7 +52,7 @@ build:
   RUN gpg --import /root/keys/libbsd.asc
 
   # This make does not work with -j 
-  RUN make BUNDLED_LIBBSD=1 static
+  RUN make BUNDLED_LIBBSD=1 static signify.1.gz
 
   # Run the regression tests. (Even though signify is already built with
   # bundled libbsd, we need to use BUNDLED_LIBBSD to keep from checking
