@@ -51,7 +51,7 @@ build:
   # The build requires a GPG verify, so import the key
   RUN gpg --import /root/keys/libbsd.asc
 
-  # This make does not work with -j 
+  # Make the statically linked binary and the compressed man page.
   RUN make BUNDLED_LIBBSD=1 static signify.1.gz
 
   # Run the regression tests. (Even though signify is already built with
