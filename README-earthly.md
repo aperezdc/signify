@@ -44,7 +44,7 @@ Signify is also a good example of a program to build and install, because it inc
 
 ## Driving the build with Earthly
 
-Earthly is build automation tool for
+Earthly is a build automation tool for
 container-based tools.  It uses the
 Docker daemon to manage containers.
 I have run it with both docker.com's [Docker
@@ -53,11 +53,12 @@ and with the [Docker packages for Fedora
 32](https://fedoramagazine.org/docker-and-fedora-32/):
 `moby-engine` and `docker-compose`.
 
-Earthly is controlled by an Earthfile, called `build.earth`, which is like a Dockerfile, broken out into targets like a Makefile.
+Earthly is controlled by an `Earthfile`, which is like a Dockerfile, broken out into targets like a Makefile.
 Each target produces an entire container image, including all side effects.
 If anything in your build leaves stray files behind in /tmp or the user's home directory, they will be persisted.
 
-More info: [Earthfile reference](https://docs.earthly.dev/earthfile) 
+The install is simple&mdash;it's a single binary.  The install instructions on the Earthly site will put it in `/usr/local/bin` by default,
+but there's nothing else to add or configure besides Earthly and Docker.  More info: [Earthfile reference](https://docs.earthly.dev/earthfile) 
 
 There is an example Earthfile for a [C++ project with CMake](https://docs.earthly.dev/examples/cpp) that I'll use as a starting
 point.
@@ -110,8 +111,8 @@ No, wait, `libbsd-download` needs to check the signature.  Make that:
 	RUN make BUNDLED_LIBBSD=1 libbsd-download
 	SAVE IMAGE
 
-Denied!  It turns out that if I try to `make` the whole
-`libbsd-download` target, then GPG will try to leave
+When I first tried this, I was not able to `make` the 
+`libbsd-download` target, because GPG tried to leave
 a socket behind under `.gnupg` in the build user's
 home directory.
 
@@ -123,26 +124,38 @@ Error: solve side effects: build error group: solve: failed to solve: rpc error:
 
 If you found this page by Googling for
 <strong>archive/tar: sockets not supported</strong>,
-here's the answer.  Either (1) don't try to do any
-build steps that run GPG until the final target, or
-(2) remove the sockets by adding
+here's the answer.  It's a
+[known bug in buildkit](https://github.com/earthly/earthly/issues/115),
+the software build system maintained as part of Moby,
+which is the open-source project that forms the basis
+of Docker.  Earthly has [fixed the problem](https://github.com/earthly/earthly/issues/115) by
+updating to the new version of buildkit.
+
+If you're still seeing this error, you can (1) upgrade your
+Earthly and Docker, (2) don't try to do any build
+steps that run GPG until the final target, or (3)
+remove the sockets by adding
 
 	RUN rm -f /root/.gnupg/S*
 
 before the `SAVE IMAGE`.
 
-The half answer is to copy the signify sources over,
-then import the key, then `make` the libbsd-download
-step, and finally remove the GPG sockets because
-they can't be saved in the container image, and save
-the image.
+So my first attempt at getting Signify to build was:
+
+ * copy the signify sources over
+ * import the key
+ * Do a `make libbsd-download`
+ * remove the GPG sockets because they can't be saved in the container image
+ * finally, save the image.
+
+In Earthfile, that looks like this.
 
 	RUN gpg --import /root/keys/libbsd.asc
 	RUN make BUNDLED_LIBBSD=1 libbsd-download
 	RUN rm -f /root/.gnupg/S*
 	SAVE IMAGE
 
-
+But that's a sub-optimal solution.
 
 ## Splitting out download, copy, and build steps
 
@@ -158,7 +171,7 @@ war, or some developer rage-quits and takes their
 downloads page down, the build will still go brrrrr.
 Not that anything like that would happen in the case
 of signify, but you never know.  And since Earthly is
-new enough that my early Earthfiles will end up being
+new enough that early Earthfiles will end up being
 copied and changed for generations, like Makefiles,
 I might as well figure out a generally good way to
 do it.
@@ -167,7 +180,7 @@ do it.
 ## Making it all work.
 
 So here's the solution I came up with.  First, I'll get the base system set up.
-This should be familiar to Docker users.  Root is going to need a copy of the
+This should be familiar to Docker users.  The `root` user is going to need a copy of the
 public key needed to check libbsd, so we'll get that too.
 
 ```
@@ -262,6 +275,11 @@ And it's all done.
 Right now Earthly is pretty new, so most
 of the discussion is happening on the
 [GitHub page](https://github.com/earthly).
+
+There is also a [Gitter
+channel](https://gitter.im/earthly-room/community)
+for user questions.
+
 The project is responsive to issues
 and suggestions&mdash;they implemented [my
 suggestion](https://github.com/earthly/earthly/issues/116)
@@ -276,7 +294,9 @@ their docs site for more sample builds.
 
 This article and modified versions of this article
 may be copied and redistributed under the same terms
-as Earthly.  This article and modified versions of
+as Earthly.
+
+This article and modified versions of
 this article may be copied and redistributed under
 the same terms as Signify.
 
