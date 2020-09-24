@@ -146,6 +146,53 @@ The following Make targets are provided as convenience for building static
   and may not work on systems where this wrapper scripts is not available.
 
 
+## Release Signing
+
+### PGP
+
+PGP detached signatures of source tarballs (`.asc`) are done with key
+[0x91C559DBE4C9123B](https://keys.openpgp.org/search?q=5AA3BC334FD7E3369E7C77B291C559DBE4C9123B).
+The key can be obtained with the following command:
+
+```sh
+gpg --keyserver hkps://keys.openpgp.org --recv-keys 5AA3BC334FD7E3369E7C77B291C559DBE4C9123B
+```
+
+Assuming that both the tarball and its signature are in the same directory,
+a release can be checked using:
+
+```sh
+gpg --verify signify-<version>.tar.xz.asc
+```
+
+### Signify
+
+An OpenBSD-style `SHA256.sig` signed checksum is provided alongside with each
+release. The signing key can be found at
+[keys/signifyportable.pub](keys/signifyportable.pub), its contents are:
+
+```
+untrusted comment: Signify portable release signing public key
+RWRQFCY809DUoWEHxWmoTNtxph6yUlWNsjfW54PqLI6S3dWfuZN4Ovj1
+```
+
+To verify a release, save the associated `SHA256.sig` file in the same
+directory as the source tarball. If the signing key is into a file named
+`signifyportable.pub`, then use:
+
+```sh
+signify -C -p signifyportable.pub -x SHA256.sig
+```
+
+The above Signify public key can itself be verified using the same PGP key
+used for release tarballs. Grab the [keys/signifyportable.pub.asc](keys/signifyportable.pub.asc)
+file as well, the run:
+
+```
+gpg --verify signifyportable.pub.asc
+```
+
+
 ## Troubleshooting
 
 * **Problem:** Undefined references to `clock_gettime`. <br>
