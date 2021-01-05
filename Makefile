@@ -254,4 +254,4 @@ static:
 static-musl:
 	$(MAKE) EXTRA_CFLAGS='$(EXTRA_CFLAGS) -pthread' EXTRA_LDFLAGS='$(EXTRA_LDFLAGS) -pthread -static' MUSL=1 CC=musl-gcc LD=musl-gcc
 
-.PHONY: static musl-static
+.PHONY: static static-musl
