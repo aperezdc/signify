@@ -84,7 +84,8 @@ usage(const char *error)
 	    "\t%1$s -G [-n] [-c comment] -p pubkey -s seckey\n"
 	    "\t%1$s -S [-enz] [-x sigfile] -s seckey -m message\n"
 #endif
-	    "\t%1$s -V [-eqz] [-p pubkey] [-t keytype] [-x sigfile] -m message\n",
+	    "\t%1$s -V [-eqz] [-p pubkey] [-t keytype] [-x sigfile] -m message\n"
+	    "\t%1$s -F [-p pubkey] [-s seckey ] [-x sigfile]\n",
 	    getprogname());
 	exit(1);
 }
@@ -547,6 +548,35 @@ verifysimple(const char *pubkeyfile, const char *msgfile, const char *sigfile,
 	free(msg);
 }
 
+static int
+fingerprint(const char *seckeyfile, const char *pubkeyfile, const char *sigfile)
+{
+	struct sig sig;
+	struct pubkey pubkey;
+	struct enckey enckey;
+	uint8_t *fp;
+
+	if (seckeyfile) {
+		readb64file(seckeyfile, &enckey, sizeof(enckey), NULL);
+		fp = enckey.keynum;
+	} else if (pubkeyfile) {
+		readb64file(pubkeyfile, &pubkey, sizeof(pubkey), NULL);
+		fp = pubkey.keynum;
+	} else if (sigfile) {
+		readb64file(sigfile, &sig, sizeof(sig), NULL);
+		fp = sig.keynum;
+	} else
+		return 1;
+
+	int i;
+	for (i = 0; i < KEYNUMLEN; i++)
+	{
+		fprintf(stdout, "%02x", fp[i]);
+	}
+	fprintf(stdout, "\n");
+	return 0;
+}
+
 static uint8_t *
 verifyembedded(const char *pubkeyfile, const char *sigfile,
     int quiet, unsigned long long *msglenp, const char *keytype)
@@ -769,13 +799,14 @@ main(int argc, char **argv)
 		CHECK,
 		GENERATE,
 		SIGN,
-		VERIFY
+		VERIFY,
+		FINGERPRINT
 	} verb = NONE;
 
 	if (pledge("stdio rpath wpath cpath tty", NULL) == -1)
 		err(1, "pledge");
 
-	while ((ch = getopt(argc, argv, "CGSVzc:em:np:qs:t:x:")) != -1) {
+	while ((ch = getopt(argc, argv, "CGSVFzc:em:np:qs:t:x:")) != -1) {
 		switch (ch) {
 #ifndef VERIFYONLY
 		case 'C':
@@ -801,6 +832,11 @@ main(int argc, char **argv)
 			if (verb)
 				usage(NULL);
 			verb = VERIFY;
+			break;
+		case 'F':
+			if (verb)
+				usage(NULL);
+			verb = FINGERPRINT;
 			break;
 		case 'c':
 			comment = optarg;
@@ -909,6 +945,10 @@ main(int argc, char **argv)
 			    quiet, keytype);
 		}
 		break;
+	case FINGERPRINT:
+		if (!!seckeyfile + !!pubkeyfile + !!sigfile != 1)
+			usage("Need one secret/public key or signature");
+		return fingerprint(seckeyfile, pubkeyfile, sigfile);
 	default:
 		if (pledge("stdio", NULL) == -1)
 			err(1, "pledge");
