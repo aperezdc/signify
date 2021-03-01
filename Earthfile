@@ -1,0 +1,64 @@
+# build.earth
+FROM debian:stable
+
+# install build dependencies, then clean up system packages
+RUN apt-get -y update && \
+    apt-get -y install build-essential file make gcc git pkg-config wget && \
+    apt-get -y --purge autoremove && \
+    apt-get -y clean 
+
+# Fetch the public key for the libbsd release.  This will be needed in
+# the build step.
+RUN mkdir -m 700 -p /root/keys /root/.gnupg
+RUN wget https://www.hadrons.org/~guillem/guillem-4F3E74F436050C10F5696574B972BF3EA4AE57A3.asc -O /root/keys/libbsd.asc
+
+WORKDIR /code
+
+
+bundle:
+  # Download the bundled libbsd.  This should only have to be run if the
+  # Makefile changes.
+  RUN mkdir /bundle
+  COPY Makefile /bundle
+
+  # The Makefile includes a "libbsd-print-urls" target that prints the 
+  # URLs of the libbsd files needed to work with this version of signify.
+  RUN (cd /bundle && make BUNDLED_LIBBSD=1 libbsd-print-urls | xargs wget)
+  RUN rm /bundle/Makefile
+
+  # Now all that is left in /bundle is copies of the files listed by
+  # libbsd-print-urls.
+  SAVE IMAGE
+
+
+code:
+  # Copy everything, then copy the libbsd files in.
+  FROM +bundle
+  COPY --dir . /code
+  RUN cp /bundle/* /code
+  SAVE IMAGE
+
+
+build:
+  FROM +code
+
+  RUN date
+
+  # The modification date on the libbsd source and signature needs to be
+  # new enough for the build not to try downloading it again.
+  RUN find . -maxdepth 1 -name 'libbsd*' -exec touch '{}' ';' 
+
+  # The build requires a GPG verify, so import the key
+  RUN gpg --import /root/keys/libbsd.asc
+
+  # Make the statically linked binary and the compressed man page.
+  RUN make BUNDLED_LIBBSD=1 static signify.1.gz
+
+  # Run the regression tests. (Even though signify is already built with
+  # bundled libbsd, we need to use BUNDLED_LIBBSD to keep from checking
+  # for a system installed copy.)
+  RUN make BUNDLED_LIBBSD=1 check
+
+  # Save the static binary and the man page
+  SAVE ARTIFACT signify AS LOCAL signify
+  SAVE ARTIFACT signify.1.gz AS LOCAL signify.1.gz
