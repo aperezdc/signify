@@ -6,7 +6,7 @@ MUSL           ?= 0
 BUNDLED_LIBBSD ?= 0
 PLEDGE         ?= noop
 WGET           ?= wget
-libbsd_VERSION ?= 0.10.0
+libbsd_VERSION ?= 0.11.0
 libbsd_BASEURL ?= http://libbsd.freedesktop.org/releases/
 #                                                                #
 ##################################################################
