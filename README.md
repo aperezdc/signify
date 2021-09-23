@@ -32,9 +32,8 @@ build from source code:
 * C compiler. Both GCC and Clang are tested and supported.
 * [libbsd](http://libbsd.freedesktop.org/wiki/) 0.8 or newer.
 
-If your system does not provide a package for `libbsd`, it is possible to
-download and compile it automatically, check the [build options](#options)
-section for more details.
+If your system does not provide a package for `libbsd`, it is possible to use
+a bundled copy, check the [build options](#options) section for more details.
 
 
 ### Options
@@ -54,33 +53,11 @@ The following options can be passed to Make:
 
 * `BUNDLED_LIBBSD=1`
 
-    Downloads, builds [libbsd](http://libbsd.freedesktop.org/wiki/), and links
-    it statically into Signify. This can be used when the version installed in
-    the system is an unsupported version, or when installing it in the system
-    is not desirable.
-
-    Enabling this option requires `wget`, `xz`, `tar`, and `gpg` installed on
-    the build system. To avoid downloading files while building, there are
-    two options:
-
-    - `make BUNDLED_LIBBSD=1 libbsd-print-urls` will print the URLs
-      of the files which need to be downloaded, one per line.
-    - `make BUNDLED_LIBBSD=1 libbsd-download` will download the needed
-      files.
-
-    Pre-downloading the files will avoid hitting the network during build, but
-    will still check the PGP signature of the `libbsd` tarball.
-
-* `BUNDLED_LIBBSD_VERIFY_GPG=0`
-
-    Disables checking the PGP signature of the bundled
-    [libbsd](http://libbsd.freedesktop.org/wiki/) tarball. This avoids the
-    need for GnuPG to be installed for building.
-
-* `BUNDLED_LIBBSD_VERIFY_GPG=/path/to/gpg`
-
-    Set the path to the `gpg` binary used for checking signatures. If not
-    specified, the program is searched in the `$PATH`.
+    Instead of picking [libbsd](http://libbsd.freedesktop.org/wiki/) from the
+    system, use a copy of the needed files included as part of the source tree
+    and link them statically into Signify. This can be used when the version
+    installed in the system is an unsupported version, or when installing it
+    in the system is not desirable.
 
 * `MUSL=1`
 
