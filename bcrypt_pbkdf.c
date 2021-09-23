@@ -19,11 +19,10 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "crypto_api.h"
 #include "blf.h"
 #include "sha2.h"
 #include <string.h>
-#include <bsd/libutil.h>
+#include <libutil.h>
 
 #define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 

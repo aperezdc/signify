@@ -22,17 +22,15 @@
 #include <limits.h>
 #include <stdint.h>
 #include <fcntl.h>
-#include <bsd/string.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include "ohash.h"
 #include <err.h>
 #include <unistd.h>
-#include <errno.h>
-#include <bsd/readpassphrase.h>
-#include <bsd/libutil.h>
-#include <bsd/stdlib.h>
+#include <readpassphrase.h>
+#include <libutil.h>
 #include "sha2.h"
 
 #include "crypto_api.h"
@@ -248,8 +246,7 @@ writekeyfile(const char *filename, const char *comment, const void *buf,
 	fd = xopen(filename, O_CREAT|oflags|O_NOFOLLOW|O_WRONLY, mode);
 	header = createheader(comment, buf, buflen);
 	writeall(fd, header, strlen(header), filename);
-	explicit_bzero(header, strlen(header));
-	free(header);
+	freezero(header, strlen(header));
 	close(fd);
 }
 

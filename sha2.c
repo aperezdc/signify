@@ -36,7 +36,7 @@
 
 #include <sys/types.h>
 
-#include <bsd/string.h>
+#include <string.h>
 #include "sha2.h"
 
 /*

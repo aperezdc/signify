@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <bsd/stdlib.h>
 
 typedef int32_t crypto_int32;
 typedef uint32_t crypto_uint32;

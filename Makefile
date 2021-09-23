@@ -56,87 +56,40 @@ ifeq ($(MUSL),1)
 endif
 
 BUNDLED_LIBBSD := $(strip $(BUNDLED_LIBBSD))
-BUNDLED_LIBBSD_VERIFY_GPG := $(strip $(BUNDLED_LIBBSD_VERIFY_GPG))
-
-ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
-  ifeq ($(BUNDLED_LIBBSD_VERIFY_GPG),)
-    # Try to detect whether "gpg" is installed.
-    BUNDLED_LIBBSD_VERIFY_GPG := $(shell which gpg 2> /dev/null || echo 0)
-  endif
-endif
 
 
 all: signify
 clean:
 
 
-# Building a static binary with Musl requires a few extra steps.
-# The rules take care of:
-#
-#   - Downloading a release (needed tools: wget).
-#   - Check the PGP signature (needed tools: gpg).
-#   - Unpack the tarball (needed tools: xz, tar).
-#   - Build libbsd.
-#
-# TODO: Also support curl for downloads.
-#
 ifeq ($(BUNDLED_LIBBSD),1)
 
-libbsd_VERSION  := $(strip $(libbsd_VERSION))
-libbsd_BASEURL  := $(strip $(libbsd_BASEURL))
-libbsd_TAR_NAME := libbsd-$(libbsd_VERSION).tar.xz
-libbsd_TAR_URL  := $(libbsd_BASEURL)/$(libbsd_TAR_NAME)
-libbsd_ARLIB    := libbsd-prefix/lib/libbsd.a
-libbsd_INCLUDE  := libbsd-prefix/include
+S += libbsd/arc4random.c \
+	 libbsd/freezero.c \
+	 libbsd/progname.c \
+	 libbsd/readpassphrase.c \
+	 libbsd/strlcpy.c
 
-ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
-libbsd_ASC_NAME := $(libbsd_TAR_NAME).asc
-libbsd_ASC_URL  := $(libbsd_BASEURL)/$(libbsd_ASC_NAME)
-$(libbsd_ASC_NAME):
-	$(WGET) -cO $@ '$(libbsd_ASC_URL)'
-	touch $@
-endif
+libbsd-config.h:
+	for i in $(patsubst conf/%.c,%,$(wildcard conf/*.c)); do \
+		if $(CC) $(LDFLAGS) -o conf-$$i conf/$$i.c > /dev/null 2>&1 ; then \
+			echo "#define $$i" ; \
+		fi ; \
+		$(RM) conf-$$i ; \
+	done > $@
 
-$(libbsd_TAR_NAME): $(libbsd_ASC_NAME)
-	$(WGET) -cO $@ '$(libbsd_TAR_URL)'
-ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
-	$(BUNDLED_LIBBSD_VERIFY_GPG) --verify $(libbsd_ASC_NAME)
-endif
-	touch $@
+clean: clean-libbsd-config
 
-libbsd-download: $(libbsd_TAR_NAME)
+clean-libbsd-config:
+	$(RM) libbsd-config.h
 
-libbsd-clean:
-	$(RM) -r libbsd-prefix libbsd-$(libbsd_VERSION)
+.PHONY: clean-libbsd-config
 
-clean: libbsd-clean
+$S: libbsd-config.h
 
-libbsd-print-urls:
-ifneq ($(BUNDLED_LIBBSD_VERIFY_GPG),0)
-	@echo '$(libbsd_ASC_URL)'
-endif
-	@echo '$(libbsd_TAR_URL)'
-
-libbsd-$(libbsd_VERSION)/configure: $(libbsd_TAR_NAME)
-	unxz -c $< | tar -xf -
-	touch $@
-
-libbsd-$(libbsd_VERSION)/Makefile: libbsd-$(libbsd_VERSION)/configure
-	( cd libbsd-$(libbsd_VERSION) && ./configure \
-		--enable-static --disable-shared \
-		--prefix=$$(pwd)/../libbsd-prefix \
-		CC=$(CC) LD=$(CC) )
-
-$(libbsd_ARLIB) $(libbsd_INCLUDE)/bsd/bsd.h: libbsd-$(libbsd_VERSION)/Makefile
-	$(MAKE) -C libbsd-$(libbsd_VERSION) install
-
-.PHONY: libbsd-download libbsd-clean libbsd-print-urls
-
-LIBBSD_DEPS    := libbsd-prefix/lib/libbsd.a
-LIBBSD_CFLAGS  := -isystem libbsd-prefix/include
+LIBBSD_DEPS    :=
+LIBBSD_CFLAGS  := -isystem libbsd/bsd -DLIBBSD_OVERLAY -include libbsd-config.h
 LIBBSD_LDFLAGS :=
-
-$S: $(libbsd_INCLUDE)/bsd/bsd.h
 
 else
 
@@ -146,8 +99,8 @@ ifneq ($(strip $(LIBBSD_PKG_CHECK)),ok)
   $(error libbsd is not installed or version is older than $(LIBBSD_PKG_VERSION))
 endif
 LIBBSD_DEPS    :=
-LIBBSD_CFLAGS  := $(shell pkg-config libbsd --cflags)
-LIBBSD_LDFLAGS := $(shell pkg-config libbsd --libs)
+LIBBSD_CFLAGS  := $(shell pkg-config libbsd-overlay --cflags)
+LIBBSD_LDFLAGS := $(shell pkg-config libbsd-overlay --libs)
 
 endif
 
