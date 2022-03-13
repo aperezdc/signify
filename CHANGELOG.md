@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v31] - 2022-03-13
+### Changed
+- Instead of downloading and building `libbsd` when the `BUNDLED_LIBBSD`
+  build option is enabled, the sources now include a copy of the few
+  sources needed.
+
 ## [v30] - 2020-09-24
 ### Changed
 - Silence a compiler warning produced by Clang 10.
@@ -101,6 +107,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v31]: https://github.com/aperezdc/signify/compare/v30...v31
 [v30]: https://github.com/aperezdc/signify/compare/v29...v30
 [v29]: https://github.com/aperezdc/signify/compare/v28...v29
 [v28]: https://github.com/aperezdc/signify/compare/v27...v28
