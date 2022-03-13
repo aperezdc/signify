@@ -5,9 +5,6 @@ BZERO          ?=
 MUSL           ?= 0
 BUNDLED_LIBBSD ?= 0
 PLEDGE         ?= noop
-WGET           ?= wget
-libbsd_VERSION ?= 0.11.3
-libbsd_BASEURL ?= http://libbsd.freedesktop.org/releases/
 #                                                                #
 ##################################################################
 
@@ -65,10 +62,10 @@ clean:
 ifeq ($(BUNDLED_LIBBSD),1)
 
 S += libbsd/arc4random.c \
-	 libbsd/freezero.c \
-	 libbsd/progname.c \
-	 libbsd/readpassphrase.c \
-	 libbsd/strlcpy.c
+     libbsd/freezero.c \
+     libbsd/progname.c \
+     libbsd/readpassphrase.c \
+     libbsd/strlcpy.c
 
 libbsd-config.h:
 	for i in $(patsubst conf/%.c,%,$(wildcard conf/*.c)); do \
