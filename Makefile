@@ -11,6 +11,7 @@ PLEDGE         ?= noop
 CFLAGS   += $(EXTRA_CFLAGS)
 LDFLAGS  += $(EXTRA_LDFLAGS)
 CPPFLAGS += -include compat.h
+INSTALL  ?= install
 
 S := crypto_api.c \
      mod_ed25519.c \
@@ -175,10 +176,10 @@ sha512_256hl.c:	helper.c
 	    -e 's/SHA512_256_CTX/SHA2_CTX/g' $< > $@
 
 install: signify signify.1.gz
-	install -m 755 -d $(DESTDIR)$(PREFIX)/bin
-	install -m 755 -t $(DESTDIR)$(PREFIX)/bin signify
-	install -m 755 -d $(DESTDIR)$(PREFIX)/share/man/man1
-	install -m 644 -t $(DESTDIR)$(PREFIX)/share/man/man1 signify.1.gz
+	$(INSTALL) -m 755 -d $(DESTDIR)$(PREFIX)/bin
+	$(INSTALL) -m 755 -t $(DESTDIR)$(PREFIX)/bin signify
+	$(INSTALL) -m 755 -d $(DESTDIR)$(PREFIX)/share/man/man1
+	$(INSTALL) -m 644 -t $(DESTDIR)$(PREFIX)/share/man/man1 signify.1.gz
 
 .PHONY: install
 
