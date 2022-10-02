@@ -22,6 +22,7 @@ S := crypto_api.c \
 	 timingsafe_bcmp.c \
 	 blowfish.c \
 	 base64.c \
+	 ohash.c \
 	 sha2.c \
 	 sha256hl.c \
 	 sha512hl.c \
@@ -120,9 +121,7 @@ libwaive/waive.c: .gitmodules
 endif
 endif
 
-ifeq ($(strip $(VERIFY_ONLY)),)
-S += ohash.c
-else
+ifeq ($(strip $(VERIFY_ONLY)),1)
      CPPFLAGS += -DVERIFY_ONLY=1
      $(warning )
      $(warning ******************************************************)
