@@ -1,5 +1,5 @@
 ##################################################################
-# The following variables may be overriden in the command line:  #
+# The following variables may be overridden in the command line: #
 #                                                                #
 BZERO          ?=
 MUSL           ?= 0
