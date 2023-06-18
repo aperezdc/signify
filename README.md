@@ -20,8 +20,11 @@ Some GNU/Linux distributions have readily available packages in their
 repositories. It is recommended to use these, unless you absolutely need to
 build from source code:
 
--   Debian: `apt install signify-openbsd`
+-   Alpine Linux: `apk add signify`
 -   Arch Linux: `pacman -S signify`
+-   Debian/Ubuntu: `apt install signify-openbsd`
+-   CentOS/RHEL/Rocky: `dnf install epel-release` then `dnf install signify`
+-   Fedora: `dnf install signify`
 
 
 ## Building
