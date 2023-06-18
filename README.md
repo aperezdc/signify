@@ -4,7 +4,7 @@
 
 OpenBSD tool to sign and verify signatures on files. This is a portable
 version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
-0.8 or newer is required).
+0.11 or newer is required).
 
 See https://www.tedunangst.com/flak/post/signify for more information.
 
@@ -30,7 +30,7 @@ build from source code:
 
 * GNU Make (any version above 3.70).
 * C compiler. Both GCC and Clang are tested and supported.
-* [libbsd](http://libbsd.freedesktop.org/wiki/) 0.8 or newer.
+* [libbsd](http://libbsd.freedesktop.org/wiki/) 0.11 or newer.
 
 If your system does not provide a package for `libbsd`, it is possible to use
 a bundled copy, check the [build options](#options) section for more details.
