@@ -34,6 +34,7 @@
 #include "sha2.h"
 
 #include "crypto_api.h"
+#include "base64.h"
 #include "signify.h"
 
 #define SIGBYTES crypto_sign_ed25519_BYTES
