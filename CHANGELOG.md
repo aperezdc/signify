@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v32] - 2024-03-07
+### Changed
+- Allow overriding the `INSTALL` Make variable to set the program used
+  instead of `install`. Thanks to @robert-scheck for the patch.
+- Updated sources from upstream OpenBSD and libbsd 0.12.1
+
+### Fixed
+- Fixed the build with `VERIFY_ONLY=1`.
+
 ## [v31] - 2022-03-13
 ### Changed
 - Instead of downloading and building `libbsd` when the `BUNDLED_LIBBSD`
@@ -107,6 +116,7 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
+[v32]: https://github.com/aperezdc/signify/compare/v31...v32
 [v31]: https://github.com/aperezdc/signify/compare/v30...v31
 [v30]: https://github.com/aperezdc/signify/compare/v29...v30
 [v29]: https://github.com/aperezdc/signify/compare/v28...v29
