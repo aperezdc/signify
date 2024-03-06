@@ -37,6 +37,9 @@
 #ifndef __is_identifier
 #define __is_identifier(x) 1
 #endif
+#ifndef __has_builtin
+#define __has_builtin(x) !__is_identifier(x)
+#endif
 
 #ifdef LIBBSD_OVERLAY
 /*
@@ -82,6 +85,10 @@
 #ifndef _SYS_CDEFS_H
 #define _SYS_CDEFS_H
 #endif
+
+/* Define the ABI for the current system. */
+//#define LIBBSD_SYS_TIME_BITS 0
+//#define LIBBSD_SYS_HAS_TIME64 0
 
 #define LIBBSD_CONCAT(x, y)	x ## y
 #define LIBBSD_STRING(x)	#x
@@ -182,7 +189,7 @@
  * require it.
  */
 #ifndef __offsetof
-# if LIBBSD_GCC_VERSION >= 0x0401 || !__is_identifier(__builtin_offsetof)
+# if LIBBSD_GCC_VERSION >= 0x0401 || __has_builtin(__builtin_offsetof)
 #  define __offsetof(type, field)	__builtin_offsetof(type, field)
 # else
 #  ifndef __cplusplus

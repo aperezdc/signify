@@ -1,4 +1,4 @@
-/*	$OpenBSD: arc4random.c,v 1.53 2015/09/10 18:53:50 bcook Exp $	*/
+/*	$OpenBSD: arc4random.c,v 1.58 2022/07/31 13:41:45 tb Exp $	*/
 
 /*
  * Copyright (c) 1996, David Mazieres <dm@uun.org>
@@ -50,6 +50,8 @@
 #define BLOCKSZ	64
 #define RSBUFSZ	(16*BLOCKSZ)
 
+#define REKEY_BASE	(1024*1024) /* NB. should be a power of 2 */
+
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
 static struct _rs {
 	size_t		rs_have;	/* valid bytes at end of rs_buf */
@@ -74,10 +76,10 @@ _rs_init(unsigned char *buf, size_t n)
 
 	if (rs == NULL) {
 		if (_rs_allocate(&rs, &rsx) == -1)
-			abort();
+			_exit(1);
 	}
 
-	chacha_keysetup(&rsx->rs_chacha, buf, KEYSZ * 8, 0);
+	chacha_keysetup(&rsx->rs_chacha, buf, KEYSZ * 8);
 	chacha_ivsetup(&rsx->rs_chacha, buf + KEYSZ);
 }
 
@@ -108,6 +110,7 @@ static void
 _rs_stir(void)
 {
 	unsigned char rnd[KEYSZ + IVSZ];
+	uint32_t rekey_fuzz = 0;
 
 	if (getentropy(rnd, sizeof rnd) == -1)
 		_getentropy_fail();
@@ -122,7 +125,10 @@ _rs_stir(void)
 	rs->rs_have = 0;
 	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
 
-	rs->rs_count = 1600000;
+	/* rekey interval should not be predictable */
+	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
+	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
+	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
 }
 
 static inline void

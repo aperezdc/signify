@@ -92,7 +92,7 @@ LIBBSD_LDFLAGS :=
 
 else
 
-LIBBSD_PKG_VERSION := 0.7
+LIBBSD_PKG_VERSION := 0.8
 LIBBSD_PKG_CHECK   := $(shell pkg-config libbsd --atleast-version=$(LIBBSD_PKG_VERSION) && echo ok)
 ifneq ($(strip $(LIBBSD_PKG_CHECK)),ok)
   $(error libbsd is not installed or version is older than $(LIBBSD_PKG_VERSION))

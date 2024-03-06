@@ -36,6 +36,15 @@
 #define TCSASOFT 0
 #endif
 
+#ifndef _NSIG
+#if defined(NSIG)
+#define _NSIG NSIG
+#else
+/* The SIGRTMAX define might be set to a function such as sysconf(). */
+#define _NSIG (SIGRTMAX + 1)
+#endif
+#endif
+
 static volatile sig_atomic_t signo[_NSIG];
 
 static void handler(int);
