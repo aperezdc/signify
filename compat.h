@@ -56,4 +56,10 @@ extern int bcrypt_pbkdf(const char *pass, size_t passlen,
 extern void explicit_bzero(void *buf, size_t len);
 #endif /* BUNDLED_BZERO */
 
+
+int b64_ntop(unsigned char const *src, size_t srclength, char *target,
+    size_t targsize);
+
+int b64_pton(char const *src, unsigned char *target, size_t targsize);
+
 #endif /* !COMPAT_H */
