@@ -14,6 +14,16 @@ Signify is distributed under the terms of the [ISC
 license](https://opensource.org/licenses/isc-license.txt).
 
 
+## Project Goals
+
+The main goal of this project is providing a portable version of the OpenBSD
+`signify` command that can be built on Linux-based systems, reusing as much
+as possible from the original code.
+
+In particular, this means that adding new features or changing the tool in
+ways that make it incompatible with the original are non-goals.
+
+
 ## Installation
 
 Some GNU/Linux distributions have readily available packages in their
@@ -25,6 +35,23 @@ build from source code:
 -   Debian/Ubuntu: `apt install signify-openbsd`
 -   CentOS/RHEL/Rocky: `dnf install epel-release` then `dnf install signify`
 -   Fedora: `dnf install signify`
+
+
+## Contributing
+
+Pull requests with third party contributions are welcome as long as they
+keep in mind the [project goals](#project-goals).
+
+### Strict No LLM / No AI Policy
+
+No LLMs for issues.
+
+No LLMs for pull requests.
+
+No LLMs for comments on the bug tracker, including translation. English
+is encouraged, but not required. You are welcome to post in your native
+language and rely on others to have their own translation tools of choice
+to interpret your words.
 
 
 ## Building
