@@ -6,7 +6,8 @@ OpenBSD tool to sign and verify signatures on files. This is a portable
 version which uses [libbsd](http://libbsd.freedesktop.org/wiki/) (version
 0.11 or newer is required).
 
-See https://www.tedunangst.com/flak/post/signify for more information.
+The **main project site** is https://codeberg.org/aperezdc/signify
+
 
 ## License
 
@@ -41,6 +42,11 @@ build from source code:
 
 Pull requests with third party contributions are welcome as long as they
 keep in mind the [project goals](#project-goals).
+
+Development takes place [at Codeberg](https://codeberg.org/aperezdc/signify),
+the GitHub repository should be treated as a mostly read-only mirror. Pull
+requests from GitHub *might* be reviewed and accepted on occasion.
+
 
 ### Strict No LLM / No AI Policy
 
