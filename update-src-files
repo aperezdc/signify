@@ -1,0 +1,21 @@
+#! /bin/bash
+#
+# update-src-files
+# Copyright (C) 2014, 2026 Adrian Perez <aperez@igalia.com>
+#
+# Distributed under terms of the MIT license.
+#
+set -e
+
+: ${BASE_URL:='https://raw.githubusercontent.com/openbsd/src/master'}
+
+while read -r filepath ; do
+	if [[ -z $filepath ]] ; then
+		continue
+	fi
+	sleeptime=$(( RANDOM % 2 )).$(( RANDOM % 10 ))
+	echo "[32;1m*[0;0m $BASE_URL/[0;0m[1;1m${filepath}[0;0m +${sleeptime}s"
+	curl -\# -LJO "$BASE_URL/$filepath"
+	sleep "$sleeptime"
+done
+
