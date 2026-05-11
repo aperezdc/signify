@@ -130,6 +130,8 @@ signify_exe = executable('signify',
   build_by_default: true,
 )
 
+install_man('signify.1')
+
 test('regress',
   files('regress/run'),
   depends: signify_exe,
