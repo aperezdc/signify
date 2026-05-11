@@ -71,7 +71,7 @@ S += libbsd/arc4random.c \
 
 libbsd-config.h:
 	for i in $(patsubst conf/%.c,%,$(wildcard conf/*.c)); do \
-		if $(CC) $(LDFLAGS) -o conf-$$i conf/$$i.c > /dev/null 2>&1 ; then \
+		if $(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o conf-$$i conf/$$i.c > /dev/null 2>&1 ; then \
 			echo "#define $$i" ; \
 		fi ; \
 		$(RM) conf-$$i ; \

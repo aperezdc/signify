@@ -137,7 +137,7 @@ done:
 		free(wpath);
 		free(mbname);
 	}
-#elif !defined(HAVE___PROGNAME)
+#else
 #error "Function getprogname() needs to be ported."
 #endif
 

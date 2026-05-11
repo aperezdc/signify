@@ -48,11 +48,6 @@ signify_extra_sources = [
   ),
 ]
 
-if not cc.has_function('explicit_bzero', prefix: '#include <string.h>')
-  signify_extra_sources += ['explicit_bzero.c']
-  signify_cflags += ['-DBUNDLED_BZERO']
-endif
-
 bundled_libbsd = get_option('bundled_libbsd')
 libbsd_dep = disabler()
 
@@ -63,7 +58,7 @@ endif
 if not libbsd_dep.found() and not bundled_libbsd.disabled()
   libbsdbundled_feature_flags = []
   foreach item : ['__PROGNAME', 'GETEXECNAME', 'PROGRAM_INVOCATION_SHORT_NAME']
-    if cc.compiles(files('conf/HAVE_' + item + '.c'))
+    if cc.links(files('conf/HAVE_' + item + '.c'), args: signify_cflags)
       libbsdbundled_feature_flags += ['-DHAVE_' + item]
     endif
   endforeach
@@ -76,7 +71,7 @@ if not libbsd_dep.found() and not bundled_libbsd.disabled()
     'libbsd/readpassphrase.c',
     'libbsd/strlcpy.c',
     include_directories: libbsdbundled_inc,
-    c_args: libbsdbundled_feature_flags + libbsdbundled_flags,
+    c_args: signify_cflags + libbsdbundled_feature_flags + libbsdbundled_flags,
   )
   libbsd_dep = declare_dependency(
     include_directories: libbsdbundled_inc,
@@ -86,6 +81,11 @@ if not libbsd_dep.found() and not bundled_libbsd.disabled()
 endif
 
 signify_dependencies = [libbsd_dep]
+
+if not cc.has_function('explicit_bzero', prefix: '#include <string.h>')
+  signify_extra_sources += ['explicit_bzero.c']
+  signify_cflags += ['-DBUNDLED_BZERO']
+endif
 
 if get_option('waive').enabled()
   libwaive_lib = static_library('libwaive',
