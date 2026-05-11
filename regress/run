@@ -47,7 +47,7 @@ fi
 # Point to the locally-built signify program
 signify () {
 	echo " - signify $* ..." 1>&2
-	"../../signify" "$@"
+	"${SIGNIFY_EXE_PATH:-../../signify}" "$@"
 }
 
 # Harness configured. Go!
