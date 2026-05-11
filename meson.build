@@ -1,5 +1,5 @@
 project('signify', 'c',
-  version: '32',
+  version: '33',
   license: 'BSD-2-Clause',
   meson_version: '>=1.4',
 )

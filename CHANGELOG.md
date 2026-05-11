@@ -1,6 +1,23 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v33] - 2026-05-11
+### Added
+- New [Meson](https://meson.build)-based build system, which also works with
+  [Muon](https://muon.build). This is considered experimental for now, and
+  therefore the existing GNU Make-based one is still supported.
+
+### Changed
+- Development has [moved to Codeberg](https://codeberg.org/aperezdc/signify),
+  with the old GitHub repository now being a mirror.
+- Try to detect whether the compiler supports the `bounded` attribute via
+  `__has_attribute()`, and enable its usage automatically when available.
+- Updated sources from upstream OpenBSD and libbsd 0.12.1
+
+### Fixed
+- Fix compilation issues when `-Wimplicit-function-declaration` is in effect,
+  which is the case with Clang 16 and GCC 13 (or newer).
+
 ## [v32] - 2024-03-07
 ### Changed
 - Allow overriding the `INSTALL` Make variable to set the program used
@@ -116,18 +133,19 @@ All notable changes to this project will be documented in this file.
 - Support using versions 0.8.2 and 0.8.3 of libbsd when `BUNDLED_LIBBSD=1` is
   specified.
 
-[v32]: https://github.com/aperezdc/signify/compare/v31...v32
-[v31]: https://github.com/aperezdc/signify/compare/v30...v31
-[v30]: https://github.com/aperezdc/signify/compare/v29...v30
-[v29]: https://github.com/aperezdc/signify/compare/v28...v29
-[v28]: https://github.com/aperezdc/signify/compare/v27...v28
-[v27]: https://github.com/aperezdc/signify/compare/v26...v27
-[v26]: https://github.com/aperezdc/signify/compare/v25...v26
-[v25]: https://github.com/aperezdc/signify/compare/v24...v25
-[v24]: https://github.com/aperezdc/signify/compare/v23...v24
-[v23]: https://github.com/aperezdc/signify/compare/v22...v23
-[v22]: https://github.com/aperezdc/signify/compare/v21...v22
-[v21]: https://github.com/aperezdc/signify/compare/v20...v21
-[v20]: https://github.com/aperezdc/signify/compare/v19...v20
-[v19]: https://github.com/aperezdc/signify/compare/v18...v19
-[v18]: https://github.com/aperezdc/signify/compare/v17...v18
+[v33]: https://codeberg.org/aperezdc/signify/compare/v32...v33
+[v32]: https://codeberg.org/aperezdc/signify/compare/v31...v32
+[v31]: https://codeberg.org/aperezdc/signify/compare/v30...v31
+[v30]: https://codeberg.org/aperezdc/signify/compare/v29...v30
+[v29]: https://codeberg.org/aperezdc/signify/compare/v28...v29
+[v28]: https://codeberg.org/aperezdc/signify/compare/v27...v28
+[v27]: https://codeberg.org/aperezdc/signify/compare/v26...v27
+[v26]: https://codeberg.org/aperezdc/signify/compare/v25...v26
+[v25]: https://codeberg.org/aperezdc/signify/compare/v24...v25
+[v24]: https://codeberg.org/aperezdc/signify/compare/v23...v24
+[v23]: https://codeberg.org/aperezdc/signify/compare/v22...v23
+[v22]: https://codeberg.org/aperezdc/signify/compare/v21...v22
+[v21]: https://codeberg.org/aperezdc/signify/compare/v20...v21
+[v20]: https://codeberg.org/aperezdc/signify/compare/v19...v20
+[v19]: https://codeberg.org/aperezdc/signify/compare/v18...v19
+[v18]: https://codeberg.org/aperezdc/signify/compare/v17...v18
