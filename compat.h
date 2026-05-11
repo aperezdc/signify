@@ -21,8 +21,16 @@
 #define _GNU_SOURCE 1
 #endif /* !_GNU_SOURCE */
 
+#if defined __has_attribute
+#define COMPAT_HAS_ATTRIBUTE __has_attribute
+#else
+#define COMPAT_HAS_ATTRIBUTE(name) 0
+#endif
+
 #ifndef COMPAT_BOUNDS_CHECKING
+#if !COMPAT_HAS_ATTRIBUTE(bounded)
 #define __bounded__(a, b, c)
+#endif
 #endif /* !COMPAT_BOUNDS_CHECKING */
 
 #ifndef __dead
