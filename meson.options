@@ -1,0 +1,10 @@
+option('bundled_libbsd',
+  type: 'feature',
+  value: 'disabled',
+  description: 'Use bundled copies of libbsd functions'
+)
+option('waive',
+  type: 'feature',
+  value: 'disabled',
+  description: 'Use libwaive to implement pledge()'
+)
