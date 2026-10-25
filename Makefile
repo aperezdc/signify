@@ -10,7 +10,7 @@ PLEDGE         ?= noop
 
 CFLAGS   += $(EXTRA_CFLAGS)
 LDFLAGS  += $(EXTRA_LDFLAGS)
-CPPFLAGS += -include compat.h -DSHA256_SMALL -DSHA512_SMALL
+CPPFLAGS += -include compat.h
 INSTALL  ?= install
 
 S := crypto_api.c \
@@ -23,8 +23,6 @@ S := crypto_api.c \
 	 blowfish.c \
 	 base64.c \
 	 ohash.c \
-	 sha256.c \
-	 sha512.c \
 	 signify.c \
 	 zsig.c
 
@@ -65,7 +63,11 @@ S += libbsd/arc4random.c \
      libbsd/freezero.c \
      libbsd/progname.c \
      libbsd/readpassphrase.c \
-     libbsd/strlcpy.c
+     libbsd/strlcpy.c \
+     libmd/sha2.c \
+     libmd/sha256hl.c \
+     libmd/sha512hl.c \
+     libmd/sha512_256hl.c
 
 libbsd-config.h:
 	for i in $(patsubst conf/%.c,%,$(wildcard conf/*.c)); do \
