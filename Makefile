@@ -10,7 +10,7 @@ PLEDGE         ?= noop
 
 CFLAGS   += $(EXTRA_CFLAGS)
 LDFLAGS  += $(EXTRA_LDFLAGS)
-CPPFLAGS += -include compat.h
+CPPFLAGS += -include compat.h -DSHA256_SMALL -DSHA512_SMALL
 INSTALL  ?= install
 
 S := crypto_api.c \
@@ -23,7 +23,8 @@ S := crypto_api.c \
 	 blowfish.c \
 	 base64.c \
 	 ohash.c \
-	 sha2.c \
+	 sha256.c \
+	 sha512.c \
 	 sha256hl.c \
 	 sha512hl.c \
 	 sha512_256hl.c \
