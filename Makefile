@@ -25,9 +25,6 @@ S := crypto_api.c \
 	 ohash.c \
 	 sha256.c \
 	 sha512.c \
-	 sha256hl.c \
-	 sha512hl.c \
-	 sha512_256hl.c \
 	 signify.c \
 	 zsig.c
 
@@ -159,21 +156,6 @@ clean: clean-signify
 
 signify.1.gz: signify.1
 	gzip -9c $< > $@
-
-sha256hl.c: helper.c
-	sed -e 's/hashinc/sha2.h/g' \
-	    -e 's/HASH/SHA256/g' \
-	    -e 's/SHA[0-9][0-9][0-9]_CTX/SHA2_CTX/g' $< > $@
-
-sha512hl.c: helper.c
-	sed -e 's/hashinc/sha2.h/g' \
-	    -e 's/HASH/SHA512/g' \
-	    -e 's/SHA[0-9][0-9][0-9]_CTX/SHA2_CTX/g' $< > $@
-
-sha512_256hl.c:	helper.c
-	sed -e 's/hashinc/sha2.h/g' \
-	    -e 's/HASH/SHA512_256/g' \
-	    -e 's/SHA512_256_CTX/SHA2_CTX/g' $< > $@
 
 install: signify signify.1.gz
 	$(INSTALL) -m 755 -d $(DESTDIR)$(PREFIX)/bin

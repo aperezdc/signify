@@ -4,7 +4,6 @@ include/sha2.h
 lib/libc/crypt/blowfish.c
 lib/libc/hash/sha256.c
 lib/libc/hash/sha512.c
-lib/libc/hash/helper.c
 lib/libc/net/base64.c
 lib/libc/string/timingsafe_bcmp.c
 
