@@ -10,44 +10,6 @@ compat_h_file = files('compat.h')[0]
 cc.has_multi_arguments('-include', compat_h_file.full_path(), required: true)
 signify_cflags = ['-include', compat_h_file.full_path()]
 
-sed_exe = find_program(['sed', 'gsed'], native: true, required: true)
-
-signify_extra_sources = [
-  custom_target(
-    output: 'sha256hl.c',
-    input: 'helper.c',
-    capture: true,
-    command: [sed_exe,
-      '-e', 's/hashinc/sha2.h/g',
-      '-e', 's/HASH_CTX/SHA2_CTX/g',
-      '-e', 's/HASH/SHA256/g',
-      '@INPUT@',
-    ],
-  ),
-  custom_target(
-    output: 'sha512hl.c',
-    input: 'helper.c',
-    capture: true,
-    command: [sed_exe,
-      '-e', 's/hashinc/sha2.h/g',
-      '-e', 's/HASH_CTX/SHA2_CTX/g',
-      '-e', 's/HASH/SHA512/g',
-      '@INPUT@',
-    ],
-  ),
-  custom_target(
-    output: 'sha512_256hl.c',
-    input: 'helper.c',
-    capture: true,
-    command: [sed_exe,
-      '-e', 's/hashinc/sha2.h/g',
-      '-e', 's/HASH_CTX/SHA2_CTX/g',
-      '-e', 's/HASH/SHA512_256/g',
-      '@INPUT@',
-    ],
-  ),
-]
-
 bundled_libbsd = get_option('bundled_libbsd')
 libbsd_dep = disabler()
 
@@ -57,7 +19,7 @@ endif
 
 if not libbsd_dep.found() and not bundled_libbsd.disabled()
   libbsdbundled_feature_flags = []
-  foreach item : ['__PROGNAME', 'GETEXECNAME', 'PROGRAM_INVOCATION_SHORT_NAME']
+  foreach item : ['__PROGNAME', 'GETEXECNAME', 'PROGRAM_INVOCATION_SHORT_NAME', 'UNISTD_H']
     if cc.links(files('conf/HAVE_' + item + '.c'), args: signify_cflags)
       libbsdbundled_feature_flags += ['-DHAVE_' + item]
     endif
@@ -70,6 +32,10 @@ if not libbsd_dep.found() and not bundled_libbsd.disabled()
     'libbsd/progname.c',
     'libbsd/readpassphrase.c',
     'libbsd/strlcpy.c',
+    'libmd/sha512hl.c',
+    'libmd/sha256hl.c',
+    'libmd/sha512_256hl.c',
+    'libmd/sha2.c',
     include_directories: libbsdbundled_inc,
     c_args: signify_cflags + libbsdbundled_feature_flags + libbsdbundled_flags,
   )
@@ -81,6 +47,7 @@ if not libbsd_dep.found() and not bundled_libbsd.disabled()
 endif
 
 signify_dependencies = [libbsd_dep]
+signify_extra_sources = []
 
 if not cc.has_function('explicit_bzero', prefix: '#include <string.h>')
   signify_extra_sources += ['explicit_bzero.c']
@@ -120,7 +87,6 @@ signify_exe = executable('signify',
   'mod_ge25519.c',
   'ohash.c',
   'sc25519.c',
-  'sha2.c',
   'timingsafe_bcmp.c',
   signify_extra_sources,
   c_args: signify_cflags,
